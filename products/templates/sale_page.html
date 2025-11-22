@@ -1,0 +1,159 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Mega Sale | E-Gadgets{% endblock %}
+
+{% block content %}
+<div class="container py-5" style="margin-top: 90px;">
+    <!-- Header Banner -->
+    <div class="text-center mb-5 animate__animated animate__fadeInDown">
+        <h2 class="fw-bold mb-3" style="color: #2C3E50;">
+            🎉 Mega Sale - Grab Your Discounts! 🎉
+        </h2>
+        <p class="lead" style="color: #555;">Get the best deals on top gadgets. Limited stock available!</p>
+    </div>
+
+    {% if products %}
+    <div class="row g-4 justify-content-center">
+        {% for product in products %}
+        <div class="col-lg-3 col-md-4 col-sm-6 animate__animated animate__zoomIn d-flex justify-content-center">
+            <a href="{% url 'products:product_detail' product.id %}" class="text-decoration-none text-dark w-100">
+                <div class="card shadow-sm border-0 rounded-4 text-center p-3 clickable-card">
+                    <img src="{{ product.image.url }}" class="card-img-top img-fluid rounded-3"
+                        alt="{{ product.name }}">
+                    <div class="card-body">
+                        <h5 class="fw-bold">{{ product.name }}</h5>
+                        <p class="text-decoration-line-through text-muted mb-1">₹{{ product.price }}</p>
+                        <p class="text-success fw-semibold">₹{{ product.discount_price }}</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+        {% endfor %}
+
+    </div>
+    {% else %}
+    <div class="text-center mt-5">
+        <h4 class="text-muted">No discounted products available right now.</h4>
+    </div>
+    {% endif %}
+</div>
+
+<style>
+    /* Card base style */
+    .sale-card {
+        border: none;
+        border-radius: 16px;
+        background-color: #fff;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+        overflow: hidden;
+        transition: all 0.3s ease;
+        min-height: 420px;
+        max-height: 420px;
+    }
+
+    .sale-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12);
+    }
+
+    /* Image Styling */
+    .product-image {
+        height: 220px;
+        width: 100%;
+        object-fit: contain;
+        padding: 15px;
+        background: #f8fbff;
+        border-bottom: 1px solid #eee;
+    }
+
+    /* Discount badge */
+    .discount-badge {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: linear-gradient(135deg, #ff9966, #ff5e62);
+        color: white;
+        font-size: 0.8rem;
+        font-weight: bold;
+        border-radius: 50px;
+        padding: 5px 10px;
+        box-shadow: 0 3px 8px rgba(255, 100, 100, 0.4);
+    }
+
+    /* View button */
+    .view-btn {
+        background: linear-gradient(135deg, #3498db, #5dade2);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 8px 20px;
+        transition: 0.3s;
+    }
+
+    .view-btn:hover {
+        background: linear-gradient(135deg, #2e86c1, #3498db);
+        transform: scale(1.05);
+    }
+
+    /* Text balance */
+    .card-body h5 {
+        min-height: 48px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+    }
+
+    /* Responsive tweak */
+    @media (max-width: 768px) {
+        .card {
+            height: 360px;
+        }
+
+        .card img {
+            height: 150px;
+        }
+    }
+
+
+    .card {
+        width: 100%;
+        height: 400px;
+        /* fixed height for equal-sized cards */
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        border: none;
+        border-radius: 20px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        transition: all 0.2s ease-in-out;
+    }
+
+    .card img {
+        height: 180px;
+        /* make images uniform */
+        object-fit: contain;
+        margin-top: 10px;
+    }
+
+    .card-body {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .card h5 {
+        min-height: 50px;
+        /* keeps title area consistent */
+        font-size: 1rem;
+    }
+
+    .clickable-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+        border: 2px solid #4e9cff;
+        /* blue border highlight */
+    }
+</style>
+{% endblock %}

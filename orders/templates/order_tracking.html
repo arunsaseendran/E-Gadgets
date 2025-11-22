@@ -1,0 +1,134 @@
+{% extends 'base.html' %}
+
+{% block title %}Track Order #{{ order.id }} | E-Gadgets{% endblock %}
+
+{% block content %}
+<div class="container py-5" style="margin-top: 100px;">
+    <h2 class="fw-bold mb-4 text-center" style="background: var(--gradient-primary); -webkit-background-clip: text; background-clip: text; color: transparent;">
+        <i class="fas fa-truck me-2"></i>Track Your Order
+    </h2>
+    
+    <!-- Order Info Card -->
+    <div class="card border-0 shadow-sm mb-4" style="border-radius: 16px; background: var(--bg-card); border: 1px solid var(--border-color);">
+        <div class="card-body p-4">
+            <div class="row g-4">
+                <div class="col-md-3 col-6">
+                    <p class="text-muted small mb-1">Order ID</p>
+                    <p class="fw-bold fs-5" style="color: var(--text-primary);">#{{ order.id }}</p>
+                </div>
+                <div class="col-md-3 col-6">
+                    <p class="text-muted small mb-1">Order Date</p>
+                    <p class="fw-bold" style="color: var(--text-primary);">{{ order.order_date|date:"F d, Y" }}</p>
+                </div>
+                <div class="col-md-3 col-6">
+                    <p class="text-muted small mb-1">Total Amount</p>
+                    <p class="fw-bold fs-5" style="color: var(--accent-primary);">₹{{ order.total_amount }}</p>
+                </div>
+                <div class="col-md-3 col-6">
+                    <p class="text-muted small mb-1">Payment Method</p>
+                    <p class="fw-bold" style="color: var(--text-primary);">
+                        {% if order.payment_method == 'COD' %}
+                            <i class="fas fa-money-bill-wave me-1"></i>Cash on Delivery
+                        {% else %}
+                            <i class="fas fa-credit-card me-1"></i>Online Payment
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Order Status Tracker -->
+    <div class="card border-0 shadow-sm mb-4" style="border-radius: 16px; background: var(--bg-card); border: 1px solid var(--border-color);">
+        <div class="card-body p-4">
+            <h4 class="fw-bold mb-4" style="color: var(--text-primary);">
+                <i class="fas fa-route me-2"></i>Order Status
+            </h4>
+            
+            <div class="position-relative py-4">
+                <!-- Progress Line -->
+                <div class="position-absolute top-50 start-0 end-0 translate-middle-y" style="height: 4px; background: var(--border-color); z-index: 0;"></div>
+                <div class="position-absolute top-50 start-0 translate-middle-y" 
+                     style="height: 4px; background: linear-gradient(90deg, #00d4ff, #06b6d4); z-index: 0; transition: width 0.5s ease;
+                     width: {% if current_index == 0 %}0%{% elif current_index == 1 %}25%{% elif current_index == 2 %}50%{% elif current_index == 3 %}75%{% else %}100%{% endif %};">
+                </div>
+                
+                <!-- Status Steps -->
+                <div class="d-flex justify-content-between position-relative" style="z-index: 1;">
+                    {% for step in status_steps %}
+                    <div class="d-flex flex-column align-items-center" style="flex: 1;">
+                        {% if forloop.counter0 <= current_index %}
+                        <div class="rounded-circle d-flex align-items-center justify-content-center mb-2 shadow" 
+                             style="width: 60px; height: 60px; background: linear-gradient(135deg, #00d4ff, #06b6d4);">
+                            <i class="fas fa-check text-white fs-4"></i>
+                        </div>
+                        {% else %}
+                        <div class="rounded-circle d-flex align-items-center justify-content-center mb-2" 
+                             style="width: 60px; height: 60px; background: var(--bg-secondary); border: 3px solid var(--border-color);">
+                            <span class="fw-bold" style="color: var(--text-secondary);">{{ forloop.counter }}</span>
+                        </div>
+                        {% endif %}
+                        <p class="text-center small mb-0 {% if forloop.counter0 <= current_index %}fw-bold{% endif %}" 
+                           style="color: {% if forloop.counter0 <= current_index %}var(--accent-primary){% else %}var(--text-secondary){% endif %}; max-width: 100px;">
+                            {{ step }}
+                        </p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            {% if order.status == 'Cancelled' %}
+            <div class="alert alert-danger mt-4 d-flex align-items-center" role="alert" style="border-radius: 12px;">
+                <i class="fas fa-exclamation-triangle me-2 fs-4"></i>
+                <div>
+                    <strong>Order Cancelled</strong>
+                    <p class="mb-0 small">This order has been cancelled.</p>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Order Items -->
+    <div class="card border-0 shadow-sm mb-4" style="border-radius: 16px; background: var(--bg-card); border: 1px solid var(--border-color);">
+        <div class="card-body p-4">
+            <h4 class="fw-bold mb-4" style="color: var(--text-primary);">
+                <i class="fas fa-box me-2"></i>Order Items
+            </h4>
+            
+            {% for item in items %}
+            <div class="row align-items-center mb-3 pb-3 {% if not forloop.last %}border-bottom{% endif %}" style="border-color: var(--border-color) !important;">
+                <div class="col-md-2 col-3">
+                    {% if item.product_image %}
+                    <img src="{{ item.product_image.url }}" alt="{{ item.product_name }}" class="img-fluid rounded" style="max-height: 80px; object-fit: cover;">
+                    {% else %}
+                    <div class="bg-secondary rounded d-flex align-items-center justify-content-center" style="height: 80px;">
+                        <i class="fas fa-image text-muted"></i>
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="col-md-6 col-9">
+                    <h6 class="mb-1 fw-bold" style="color: var(--text-primary);">{{ item.product_name }}</h6>
+                    <p class="text-muted small mb-0">
+                        <i class="fas fa-cubes me-1"></i>Quantity: <strong>{{ item.quantity }}</strong>
+                    </p>
+                    <p class="text-muted small mb-0">
+                        <i class="fas fa-tag me-1"></i>Price: <strong>₹{{ item.price }}</strong>
+                    </p>
+                </div>
+                <div class="col-md-4 text-md-end mt-2 mt-md-0">
+                    <p class="fw-bold fs-5 mb-0" style="color: var(--accent-primary);">₹{{ item.total_price }}</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Back Button -->
+    <div class="text-center mt-4 mb-5">
+        <a href="{% url 'orders:order_history' %}" class="btn btn-primary px-5 py-2">
+            <i class="fas fa-arrow-left me-2"></i>Back to Order History
+        </a>
+    </div>
+</div>
+{% endblock %}

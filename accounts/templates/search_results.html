@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+{% block title %}
+  Search Results
+{% endblock %}
+{% block content %}
+  <style>
+    /* Dark theme search results */
+    .search-results-container {
+      margin-top: 100px !important;
+      margin-bottom: 100px !important;
+    }
+    
+    .search-heading {
+      text-align: center !important;
+      font-weight: 700 !important;
+      color: var(--accent-primary) !important;
+      margin-bottom: 40px !important;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+    
+    .search-product-card {
+      display: flex !important;
+      flex-direction: column !important;
+      justify-content: space-between !important;
+      height: 100% !important;
+      border: 1px solid var(--border-color) !important;
+      border-radius: 15px !important;
+      background: var(--bg-card) !important;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3) !important;
+      transition: all 0.3s ease-in-out !important;
+      overflow: hidden !important;
+    }
+    
+    .search-product-card:hover {
+      transform: translateY(-8px) !important;
+      box-shadow: 0 8px 25px rgba(0, 212, 255, 0.3) !important;
+      border-color: var(--accent-primary) !important;
+    }
+    
+    .search-product-card img {
+      width: 100% !important;
+      height: 230px !important;
+      object-fit: contain !important;
+      background: var(--bg-primary) !important;
+      padding: 15px !important;
+      border-bottom: 1px solid var(--border-color) !important;
+    }
+    
+    .search-product-card .card-body {
+      text-align: center !important;
+      flex-grow: 1 !important;
+      display: flex !important;
+      flex-direction: column !important;
+      justify-content: space-between !important;
+      padding: 20px !important;
+      background: var(--bg-card) !important;
+    }
+    
+    .search-product-card .card-title {
+      font-size: 1rem !important;
+      font-weight: 600 !important;
+      color: var(--text-primary) !important;
+      min-height: 48px !important;
+      margin-bottom: 12px !important;
+    }
+    
+    .search-product-card .card-text {
+      color: var(--accent-primary) !important;
+      font-weight: 600 !important;
+      font-size: 1.1rem !important;
+      margin-bottom: 15px !important;
+    }
+    
+    .search-product-card .btn {
+      border-radius: 25px !important;
+      font-size: 0.9rem !important;
+      font-weight: 500 !important;
+      padding: 8px 20px !important;
+      background: transparent !important;
+      border: 2px solid var(--accent-primary) !important;
+      color: var(--accent-primary) !important;
+      transition: all 0.3s ease !important;
+    }
+    
+    .search-product-card .btn:hover {
+      background: var(--accent-primary) !important;
+      color: var(--bg-primary) !important;
+      transform: scale(1.05) !important;
+    }
+    
+    .row.g-4 {
+      row-gap: 2rem !important;
+    }
+    
+    .no-results {
+      text-align: center;
+      color: var(--text-secondary);
+      font-size: 1.2rem;
+      padding: 60px 20px;
+    }
+  </style>
+
+  <div class="container search-results-container">
+    <h3 class="search-heading">Search Results</h3>
+    <div class="row g-4">
+      {% for product in products %}
+        <div class="col-lg-3 col-md-4 col-sm-6 d-flex">
+          <div class="search-product-card card w-100">
+            <img src="{{ product.image.url }}" alt="{{ product.name }}" />
+            <div class="card-body">
+              <h5 class="card-title">{{ product.name }}</h5>
+              <p class="card-text">₹{{ product.price }}</p>
+              <a href="{% url 'products:product_detail' product.id %}" class="btn btn-sm">View Details</a>
+            </div>
+          </div>
+        </div>
+      {% empty %}
+        <div class="col-12">
+          <div class="no-results">
+            <i class="fas fa-search fa-3x mb-3" style="opacity: 0.3;"></i>
+            <p>No products found matching your search.</p>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+{% endblock %}

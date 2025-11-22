@@ -1,0 +1,1098 @@
+/* ========================================
+   E-GADGETS DARK THEME - MODERN UI/UX
+   ======================================== */
+
+:root {
+    /* Dark Theme Colors */
+    --bg-primary: #0d0d0d;
+    --bg-secondary: #1a1a1a;
+    --bg-card: #242424;
+    --bg-hover: #2e2e2e;
+    
+    /* Accent Colors */
+    --accent-primary: #00d4ff;
+    --accent-secondary: #0ea5e9;
+    --accent-success: #06b6d4;
+    --accent-warning: #f59e0b;
+    --accent-danger: #ef4444;
+    
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, #00d4ff 0%, #0ea5e9 100%);
+    --gradient-secondary: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+    --gradient-success: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%);
+    --gradient-info: linear-gradient(135deg, #00d4ff 0%, #06b6d4 100%);
+    
+    /* Text Colors */
+    --text-primary: #e2e8f0;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
+    
+    /* Border & Shadow */
+    --border-color: #2d3548;
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.5);
+    --shadow-glow: 0 0 20px rgba(0, 212, 255, 0.3);
+}
+
+/* ========================================
+   GLOBAL STYLES
+   ======================================== */
+
+body {
+    background: var(--bg-primary) !important;
+    color: var(--text-primary) !important;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    overflow-x: hidden;
+}
+
+/* Animated Background */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: 
+        radial-gradient(circle at 20% 50%, rgba(0, 212, 255, 0.08) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(6, 182, 212, 0.08) 0%, transparent 50%);
+    z-index: -1;
+    animation: backgroundPulse 15s ease-in-out infinite;
+}
+
+@keyframes backgroundPulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.8; }
+}
+
+/* ========================================
+   NAVBAR STYLES
+   ======================================== */
+
+.navbar {
+    background: rgba(13, 13, 13, 0.95) !important;
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border-color);
+    box-shadow: var(--shadow-md);
+    transition: all 0.3s ease;
+}
+
+.navbar-dark {
+    background: rgba(13, 13, 13, 0.95) !important;
+}
+
+.navbar-toggler {
+    border-color: var(--accent-primary) !important;
+}
+
+.navbar-toggler-icon {
+    filter: brightness(0) saturate(100%) invert(62%) sepia(89%) saturate(2481%) hue-rotate(162deg) brightness(101%) contrast(101%);
+}
+
+.navbar-brand {
+    font-size: 1.5rem;
+    font-weight: 700;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    transition: all 0.3s ease;
+}
+
+.navbar-brand:hover {
+    transform: scale(1.05);
+    filter: brightness(1.2);
+}
+
+.nav-link {
+    color: var(--text-secondary) !important;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background: var(--gradient-primary);
+    transition: all 0.3s ease;
+    transform: translateX(-50%);
+}
+
+.nav-link:hover {
+    color: var(--accent-primary) !important;
+    transform: translateY(-2px);
+}
+
+.nav-link:hover::after {
+    width: 80%;
+}
+
+/* Fix profile dropdown toggle hover */
+.nav-link.dropdown-toggle {
+    position: relative;
+}
+
+.nav-link.dropdown-toggle::after {
+    display: none !important;
+}
+
+.nav-link.dropdown-toggle:hover {
+    color: var(--accent-primary) !important;
+    transform: none !important;
+}
+
+.nav-link.dropdown-toggle i {
+    transition: all 0.3s ease;
+}
+
+.nav-link.dropdown-toggle:hover i {
+    color: var(--accent-primary) !important;
+    transform: scale(1.1);
+}
+
+/* ========================================
+   CARDS & CONTAINERS
+   ======================================== */
+
+.card {
+    background: var(--bg-card) !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 16px !important;
+    box-shadow: var(--shadow-md);
+    transition: all 0.3s ease;
+    overflow: hidden;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-lg), var(--shadow-glow);
+    border-color: var(--accent-primary) !important;
+}
+
+.card-header {
+    background: var(--bg-secondary) !important;
+    border-bottom: 1px solid var(--border-color) !important;
+    color: var(--text-primary) !important;
+}
+
+.card-body {
+    background: transparent !important;
+    color: var(--text-primary) !important;
+}
+
+.card-footer {
+    background: var(--bg-secondary) !important;
+    border-top: 1px solid var(--border-color) !important;
+    color: var(--text-primary) !important;
+}
+
+/* Override any white/light backgrounds */
+.bg-white,
+.bg-light {
+    background: var(--bg-card) !important;
+}
+
+/* Container backgrounds */
+.container,
+.container-fluid {
+    background: transparent !important;
+}
+
+/* ========================================
+   BUTTONS
+   ======================================== */
+
+.btn {
+    border-radius: 12px;
+    font-weight: 600;
+    padding: 0.75rem 1.5rem;
+    transition: all 0.3s ease;
+    border: none;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+.btn:hover::before {
+    width: 300px;
+    height: 300px;
+}
+
+.btn-primary {
+    background: var(--gradient-primary) !important;
+    box-shadow: 0 4px 15px rgba(0, 212, 255, 0.4);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 212, 255, 0.6);
+}
+
+.btn-success {
+    background: var(--gradient-success) !important;
+    box-shadow: 0 4px 15px rgba(67, 233, 123, 0.4);
+}
+
+.btn-success:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(67, 233, 123, 0.6);
+}
+
+.btn-outline-primary {
+    border: 2px solid var(--accent-primary) !important;
+    color: var(--accent-primary) !important;
+    background: transparent !important;
+}
+
+.btn-outline-primary:hover {
+    background: var(--accent-primary) !important;
+    color: white !important;
+    transform: translateY(-2px);
+}
+
+/* ========================================
+   PRODUCT CARDS - NEXT LEVEL UI/UX
+   ======================================== */
+
+/* Ensure grid rows display cards with equal heights */
+.row.g-4 {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.row.g-4 > [class*='col-'] {
+    display: flex;
+    flex-direction: column;
+}
+
+.product-card {
+    background: var(--bg-card) !important;
+    border: 1px solid var(--border-color);
+    border-radius: 24px;
+    overflow: hidden;
+    transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 520px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.product-card * {
+    position: relative;
+    z-index: 1;
+}
+
+/* Animated gradient border on hover */
+.product-card::after {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: var(--gradient-primary);
+    border-radius: 24px;
+    opacity: 0;
+    z-index: 0;
+    transition: opacity 0.5s ease;
+}
+
+.product-card:hover::after {
+    opacity: 1;
+    animation: borderGlow 2s ease-in-out infinite;
+}
+
+@keyframes borderGlow {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 0.5; }
+}
+
+/* Product card image container - fixed height */
+.product-card .position-relative.overflow-hidden {
+    height: 250px !important;
+    flex-shrink: 0;
+    background: linear-gradient(135deg, #1a1a1a 0%, #0d0d0d 100%) !important;
+    position: relative;
+}
+
+/* Shimmer effect on image container */
+.product-card .position-relative.overflow-hidden::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(0, 212, 255, 0.1), transparent);
+    transition: left 0.5s ease;
+    z-index: 2;
+}
+
+.product-card:hover .position-relative.overflow-hidden::before {
+    left: 100%;
+}
+
+/* Product images - dark background */
+.product-card img {
+    background: linear-gradient(135deg, #1a1a1a 0%, #0d0d0d 100%);
+    object-fit: contain !important;
+    padding: 1rem;
+    transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    filter: brightness(0.95) contrast(1.05);
+}
+
+.product-card:hover img {
+    transform: scale(1.05);
+    filter: brightness(1.02) contrast(1.05);
+}
+
+/* Product card content area */
+.product-card .p-3 {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    padding: 1.25rem !important;
+    background: transparent;
+    transition: background 0.3s ease;
+}
+
+.product-card:hover .p-3 {
+    background: linear-gradient(180deg, transparent 0%, rgba(0, 212, 255, 0.03) 100%);
+}
+
+/* Category badge */
+.product-card small.text-muted {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    background: rgba(0, 212, 255, 0.1);
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--accent-primary) !important;
+    width: fit-content;
+    margin-bottom: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+.product-card:hover small.text-muted {
+    background: rgba(0, 212, 255, 0.2);
+    transform: translateX(5px);
+}
+
+/* Product title - fixed height */
+.product-card h6 {
+    min-height: 48px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 1.1rem;
+    line-height: 1.4;
+    transition: all 0.3s ease;
+}
+
+.product-card h6 a {
+    background: linear-gradient(135deg, var(--text-primary) 0%, var(--accent-primary) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    transition: all 0.3s ease;
+}
+
+.product-card:hover h6 a {
+    -webkit-text-fill-color: var(--accent-primary);
+}
+
+/* Rating stars with animation */
+.product-card .fa-star {
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+}
+
+.product-card:hover .fa-star {
+    transform: scale(1.1);
+}
+
+.product-card .fa-star.fas {
+    color: #fbbf24 !important;
+    filter: drop-shadow(0 0 4px rgba(251, 191, 36, 0.5));
+}
+
+/* Price section */
+.product-card .d-flex.align-items-center.justify-content-between {
+    margin-top: auto;
+    margin-bottom: 0.75rem;
+    padding: 0.75rem;
+    background: rgba(0, 212, 255, 0.05);
+    border-radius: 12px;
+    border: 1px solid rgba(0, 212, 255, 0.1);
+    transition: all 0.3s ease;
+}
+
+.product-card:hover .d-flex.align-items-center.justify-content-between {
+    background: rgba(0, 212, 255, 0.1);
+    border-color: rgba(0, 212, 255, 0.3);
+    transform: scale(1.02);
+}
+
+/* Price styling with glow */
+.product-card .fw-bold.fs-5 {
+    font-size: 1.5rem !important;
+    font-weight: 800 !important;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 0 8px rgba(0, 212, 255, 0.3));
+    transition: all 0.3s ease;
+}
+
+.product-card:hover .fw-bold.fs-5 {
+    transform: scale(1.05);
+    filter: drop-shadow(0 0 12px rgba(0, 212, 255, 0.6));
+}
+
+/* Stock status with icon animation */
+.product-card small {
+    transition: all 0.3s ease;
+}
+
+.product-card small i {
+    transition: all 0.3s ease;
+}
+
+.product-card:hover small.text-success i {
+    animation: pulse 1s ease-in-out infinite;
+}
+
+/* Add to Cart button - always at bottom */
+.product-card form {
+    margin-top: auto;
+}
+
+.product-card form .btn {
+    border-radius: 14px;
+    font-weight: 700;
+    padding: 0.75rem 1.5rem;
+    font-size: 0.95rem;
+    letter-spacing: 0.5px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.product-card form .btn::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+.product-card form .btn:hover::before {
+    width: 300px;
+    height: 300px;
+}
+
+.product-card form .btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0, 212, 255, 0.5);
+}
+
+/* Gradient overlay on hover */
+.product-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at top right, rgba(0, 212, 255, 0.03) 0%, transparent 60%);
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    z-index: 0;
+    pointer-events: none;
+}
+
+.product-card:hover::before {
+    opacity: 1;
+}
+
+.product-card:hover {
+    transform: translateY(-8px) scale(1.01);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6), 
+                0 0 20px rgba(0, 212, 255, 0.2),
+                inset 0 0 0 1px rgba(0, 212, 255, 0.15);
+    border-color: var(--accent-primary);
+}
+
+/* Ensure all card text uses proper colors */
+.product-card .card-body,
+.product-card .p-3 {
+    background: transparent !important;
+}
+
+.product-card small,
+.product-card h6,
+.product-card p {
+    color: var(--text-primary) !important;
+}
+
+.product-card .text-muted {
+    color: var(--text-muted) !important;
+}
+
+.product-badge {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: var(--gradient-info) !important;
+    color: white !important;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-weight: 700;
+    font-size: 0.85rem;
+    box-shadow: 0 4px 15px rgba(0, 212, 255, 0.4);
+    z-index: 2;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+/* Product card specific buttons */
+.product-card .btn-primary {
+    background: var(--gradient-primary) !important;
+    border: none !important;
+    color: white !important;
+    font-weight: 700;
+}
+
+.product-card .btn-success {
+    background: var(--gradient-success) !important;
+    border: none !important;
+}
+
+/* Price styling in product cards */
+.product-card .fw-bold.fs-5 {
+    color: var(--accent-primary) !important;
+}
+
+.product-card .text-success {
+    color: var(--accent-success) !important;
+}
+
+.product-card .text-danger {
+    color: var(--accent-danger) !important;
+}
+
+/* ========================================
+   FORMS & INPUTS
+   ======================================== */
+
+.form-control, .form-select {
+    background: var(--bg-secondary) !important;
+    border: 1px solid var(--border-color) !important;
+    color: var(--text-primary) !important;
+    border-radius: 12px;
+    padding: 0.75rem 1rem;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus, .form-select:focus {
+    background: var(--bg-card) !important;
+    border-color: var(--accent-primary) !important;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2) !important;
+    color: var(--text-primary) !important;
+}
+
+.form-control::placeholder {
+    color: var(--text-muted);
+}
+
+.form-label {
+    color: var(--text-secondary);
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+/* ========================================
+   DROPDOWN MENUS
+   ======================================== */
+
+.dropdown-menu {
+    background: var(--bg-card) !important;
+    border: 1px solid var(--border-color) !important;
+    box-shadow: var(--shadow-lg);
+    border-radius: 12px !important;
+}
+
+.dropdown-item {
+    color: var(--text-secondary) !important;
+    transition: all 0.3s ease;
+    border-radius: 8px;
+    margin: 2px 0;
+}
+
+.dropdown-item:hover, .dropdown-item:focus {
+    background: var(--bg-hover) !important;
+    color: var(--accent-primary) !important;
+}
+
+.dropdown-item i {
+    color: var(--accent-primary);
+}
+
+/* ========================================
+   BADGES & PILLS
+   ======================================== */
+
+.badge {
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+.bg-primary {
+    background: var(--gradient-primary) !important;
+}
+
+.bg-success {
+    background: var(--gradient-success) !important;
+}
+
+.bg-danger {
+    background: var(--gradient-secondary) !important;
+}
+
+.bg-info {
+    background: var(--gradient-info) !important;
+}
+
+/* Admin dashboard specific styling */
+.btn-info {
+    background: var(--gradient-info) !important;
+    border: none !important;
+    color: white !important;
+}
+
+.btn-info:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 212, 255, 0.6);
+}
+
+.bg-warning {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%) !important;
+}
+
+/* ========================================
+   LIST GROUPS
+   ======================================== */
+
+.list-group-item {
+    background: transparent !important;
+    color: var(--text-primary) !important;
+    border-color: var(--border-color) !important;
+}
+
+.list-group-item:hover {
+    background: var(--bg-hover) !important;
+}
+
+.list-group-flush .list-group-item {
+    border-width: 0 0 1px 0;
+}
+
+/* ========================================
+   TABLES
+   ======================================== */
+
+.table {
+    color: var(--text-primary) !important;
+    background: transparent !important;
+}
+
+.table thead {
+    background: var(--bg-secondary) !important;
+    color: var(--text-primary) !important;
+}
+
+.table tbody tr {
+    background: transparent !important;
+    border-color: var(--border-color) !important;
+}
+
+.table tbody tr:hover {
+    background: var(--bg-hover) !important;
+}
+
+.table td, .table th {
+    background: transparent !important;
+    border-color: var(--border-color) !important;
+    color: var(--text-primary) !important;
+}
+
+.table-light {
+    background: var(--bg-secondary) !important;
+    color: var(--text-primary) !important;
+}
+
+.table-hover tbody tr:hover {
+    background: var(--bg-hover) !important;
+    color: var(--text-primary) !important;
+}
+
+.table-sm td, .table-sm th {
+    padding: 0.5rem !important;
+}
+
+.table-hover tbody tr:hover {
+    background: var(--bg-hover) !important;
+    cursor: pointer;
+}
+
+/* ========================================
+   ANIMATIONS
+   ======================================== */
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.6s ease-out;
+}
+
+.animate-fade-in-up {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+.animate-slide-in-left {
+    animation: slideInLeft 0.6s ease-out;
+}
+
+.animate-slide-in-right {
+    animation: slideInRight 0.6s ease-out;
+}
+
+/* Stagger animation for lists */
+.stagger-animation > * {
+    opacity: 0;
+    animation: fadeInUp 0.6s ease-out forwards;
+}
+
+.stagger-animation > *:nth-child(1) { animation-delay: 0.1s; }
+.stagger-animation > *:nth-child(2) { animation-delay: 0.2s; }
+.stagger-animation > *:nth-child(3) { animation-delay: 0.3s; }
+.stagger-animation > *:nth-child(4) { animation-delay: 0.4s; }
+.stagger-animation > *:nth-child(5) { animation-delay: 0.5s; }
+.stagger-animation > *:nth-child(6) { animation-delay: 0.6s; }
+
+/* ========================================
+   HERO SECTION
+   ======================================== */
+
+.hero-section {
+    background: linear-gradient(135deg, #0d0d0d 0%, #1a1a1a 100%);
+    padding: 100px 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-section::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, rgba(0, 212, 255, 0.12) 0%, transparent 70%);
+    animation: rotate 20s linear infinite;
+}
+
+@keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.hero-title {
+    font-size: 3.5rem;
+    font-weight: 800;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 1.5rem;
+}
+
+.hero-subtitle {
+    font-size: 1.25rem;
+    color: var(--text-secondary);
+    margin-bottom: 2rem;
+}
+
+/* ========================================
+   FOOTER
+   ======================================== */
+
+footer {
+    background: var(--bg-secondary);
+    border-top: 1px solid var(--border-color);
+    color: var(--text-secondary);
+}
+
+footer a {
+    color: var(--text-secondary);
+    transition: all 0.3s ease;
+}
+
+footer a:hover {
+    color: var(--accent-primary);
+    transform: translateX(5px);
+}
+
+/* ========================================
+   SCROLLBAR
+   ======================================== */
+
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--bg-primary);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--accent-primary);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--accent-secondary);
+}
+
+/* ========================================
+   LOADING SPINNER
+   ======================================== */
+
+.spinner {
+    width: 50px;
+    height: 50px;
+    border: 4px solid var(--border-color);
+    border-top: 4px solid var(--accent-primary);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* ========================================
+   GLASSMORPHISM EFFECT
+   ======================================== */
+
+.glass {
+    background: rgba(26, 31, 58, 0.7);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+/* ========================================
+   RESPONSIVE
+   ======================================== */
+
+@media (max-width: 768px) {
+    .hero-title {
+        font-size: 2.5rem;
+    }
+    
+    .hero-subtitle {
+        font-size: 1rem;
+    }
+    
+    .product-card:hover {
+        transform: translateY(-5px) scale(1.01);
+    }
+}
+
+/* ========================================
+   ALERTS
+   ======================================== */
+
+.alert {
+    border-radius: 12px;
+    border: none;
+}
+
+.alert-success {
+    background: linear-gradient(135deg, rgba(20, 184, 166, 0.2) 0%, rgba(13, 148, 136, 0.2) 100%) !important;
+    color: #14b8a6 !important;
+    border-left: 4px solid #14b8a6 !important;
+}
+
+.alert-danger {
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.2) 0%, rgba(220, 38, 38, 0.2) 100%) !important;
+    color: #ef4444 !important;
+    border-left: 4px solid #ef4444 !important;
+}
+
+.alert-warning {
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.2) 0%, rgba(217, 119, 6, 0.2) 100%) !important;
+    color: #f59e0b !important;
+    border-left: 4px solid #f59e0b !important;
+}
+
+.alert-info {
+    background: linear-gradient(135deg, rgba(0, 212, 255, 0.2) 0%, rgba(6, 182, 212, 0.2) 100%) !important;
+    color: #00d4ff !important;
+    border-left: 4px solid #00d4ff !important;
+}
+
+/* ========================================
+   CHECKOUT PAYMENT OPTIONS
+   ======================================== */
+
+.payment-option {
+    background: var(--bg-secondary) !important;
+    border: 1px solid var(--border-color) !important;
+    color: var(--text-primary) !important;
+}
+
+.payment-option:hover {
+    background: var(--bg-hover) !important;
+}
+
+.payment-option .form-check-label,
+.payment-option strong,
+.payment-option p,
+.payment-option .d-flex,
+.payment-option i {
+    color: var(--text-primary) !important;
+}
+
+.payment-option .text-muted {
+    color: var(--text-secondary) !important;
+}
+
+.payment-option .form-check-input {
+    background: transparent !important;
+    border-color: var(--accent-primary) !important;
+}
+
+.payment-option .form-check-input:checked {
+    background-color: var(--accent-primary) !important;
+    border-color: var(--accent-primary) !important;
+}
+
+#razorpayDetails {
+    background: var(--bg-secondary) !important;
+    color: var(--text-primary) !important;
+    border-color: var(--border-color) !important;
+}
+
+/* ========================================
+   TEXT COLORS
+   ======================================== */
+
+.text-primary {
+    color: var(--accent-primary) !important;
+}
+
+.text-muted {
+    color: var(--text-muted) !important;
+}
+
+.text-secondary {
+    color: var(--text-secondary) !important;
+}
+
+/* ========================================
+   UTILITY CLASSES
+   ======================================== */
+
+.text-gradient {
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.glow {
+    box-shadow: var(--shadow-glow);
+}
+
+.hover-lift {
+    transition: transform 0.3s ease;
+}
+
+.hover-lift:hover {
+    transform: translateY(-5px);
+}

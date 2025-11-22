@@ -1,0 +1,139 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+  My Wishlist | E-Gadgets
+{% endblock %}
+
+{% block content %}
+  <div class="container py-5" style="margin-top: 100px; padding-bottom: 150px;">
+    <h2 class="fw-bold mb-5 text-left text-gradient">My Wishlist 💖</h2>
+
+    {% if items %}
+      <div class="row g-4 justify-content-center">
+        {% for item in items %}
+          <div class="col-lg-3 col-md-4 col-sm-6">
+            <div class="card wishlist-card border-0 shadow-sm rounded-4 overflow-hidden h-100">
+              <div class="wishlist-img-wrapper">
+                <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" class="card-img-top" />
+              </div>
+              <div class="card-body text-center">
+                <h5 class="card-title fw-semibold text-truncate">{{ item.product.name }}</h5>
+                <p class="text-primary fw-bold fs-6 mb-3">₹{{ item.product.price }}</p>
+
+                <div class="d-flex justify-content-center gap-2">
+                  {% if item.product.id in cart_product_ids %}
+                    <button class="btn btn-success btn-sm" disabled>✔ Added to Cart</button>
+                  {% else %}
+                    <button id="add-to-cart-btn-{{ item.product.id }}" class="btn btn-outline-primary btn-sm" onclick="addToCart('{{ item.product.id }}')"><i class="fa fa-cart-plus me-1"></i> Add to Cart</button>
+                  {% endif %}
+                  <a href="{% url 'products:buy_now' item.product.id %}" class="btn btn-danger btn-sm">⚡ Buy Now</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="text-center mt-5">
+        <h5 class="text-muted">Your wishlist is empty 😢</h5>
+        <a href="{% url 'core:home' %}" class="btn btn-primary mt-3">Browse Products</a>
+      </div>
+    {% endif %}
+  </div>
+
+  <style>
+    /* ---------- Heading Gradient ---------- */
+    .text-gradient {
+      background: linear-gradient(45deg, #ee1e1eff, #2575fc);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    
+    /* ---------- Card Styles ---------- */
+    .wishlist-card {
+      transition: all 0.3s ease;
+      background-color: #fff;
+    }
+    .wishlist-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    }
+    
+    /* ---------- Image Styling (Fixed Fit Issue) ---------- */
+    .wishlist-img-wrapper {
+      height: 250px; /* slightly taller for full image */
+      width: 100%;
+      background: #f8f9fb;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      border-bottom: 1px solid #eee;
+    }
+    
+    .wishlist-img-wrapper img {
+      max-height: 100%;
+      width: auto;
+      object-fit: contain; /* ✅ ensures full image fits naturally */
+      transition: transform 0.4s ease;
+    }
+    
+    .wishlist-card:hover .wishlist-img-wrapper img {
+      transform: scale(1.05);
+    }
+    
+    /* ---------- Buttons ---------- */
+    .btn-outline-primary {
+      border-radius: 25px;
+      padding: 5px 15px;
+    }
+    .btn-danger {
+      border-radius: 25px;
+      padding: 5px 15px;
+      background: linear-gradient(45deg, #ff4b5c, #ff6f61);
+      border: none;
+    }
+    .btn-danger:hover {
+      opacity: 0.9;
+    }
+  </style>
+
+  <script>
+    function getCookie(name) {
+      let cookieValue = null
+      if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';')
+        for (let i = 0; i < cookies.length; i++) {
+          const cookie = cookies[i].trim()
+          if (cookie.substring(0, name.length + 1) === name + '=') {
+            cookieValue = decodeURIComponent(cookie.substring(name.length + 1))
+            break
+          }
+        }
+      }
+      return cookieValue
+    }
+    
+    function addToCart(productId) {
+      const btn = document.getElementById(`add-to-cart-btn-${productId}`)
+    
+      fetch(`/cart/add/${productId}/`, {
+        method: 'POST',
+        headers: { 'X-CSRFToken': getCookie('csrftoken') }
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.added) {
+            btn.innerHTML = '✔ Added to Cart'
+            btn.classList.remove('btn-outline-primary')
+            btn.classList.add('btn-success')
+          } else if (data.removed) {
+            btn.innerHTML = '<i class="fa fa-cart-plus"></i> Add to Cart'
+            btn.classList.remove('btn-success')
+            btn.classList.add('btn-outline-primary')
+          }
+        })
+        .catch((error) => console.error('Error:', error))
+    }
+  </script>
+{% endblock %}

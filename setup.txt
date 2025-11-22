@@ -1,0 +1,49 @@
+===========================================
+E-GADGETS PROJECT SETUP INSTRUCTIONS
+===========================================
+
+STEP 1: CREATE VIRTUAL ENVIRONMENT
+-----------------------------------
+python -m venv venv
+
+
+STEP 2: ACTIVATE VIRTUAL ENVIRONMENT
+-------------------------------------
+For Windows:
+venv\Scripts\activate
+
+For Mac/Linux:
+source venv/bin/activate
+
+
+STEP 3: INSTALL REQUIREMENTS
+-----------------------------
+pip install -r requirements.txt
+
+
+STEP 4: CONFIGURE RAZORPAY API KEYS
+------------------------------------
+1. Get test API keys from: https://dashboard.razorpay.com/app/keys
+2. Update .env file with your actual keys:
+   RAZORPAY_KEY_ID=rzp_test_YOUR_KEY_ID
+   RAZORPAY_KEY_SECRET=YOUR_KEY_SECRET
+
+
+STEP 5: RUN DATABASE MIGRATIONS
+--------------------------------
+python manage.py makemigrations
+python manage.py migrate
+
+
+STEP 6: START DEVELOPMENT SERVER
+---------------------------------
+python manage.py runserver
+
+
+===========================================
+SETUP COMPLETE!
+===========================================
+
+📚 Additional Documentation:
+- Razorpay Setup Guide: RAZORPAY_SETUP.md
+- Test Credentials: RAZORPAY_TEST_CREDENTIALS.txt

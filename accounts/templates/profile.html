@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% block title %}Profile Settings | E-Gadgets{% endblock %}
+
+{% block content %}
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 80vh; margin-top: 90px;">
+    <div class="card shadow-lg p-4" style="width: 100%; max-width: 500px; border-radius: 15px;">
+        <h3 class="text-center mb-4 fw-bold">Profile Settings</h3>
+
+        <form method="POST">
+            {% csrf_token %}
+
+            <!-- Phone -->
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Phone Number</label>
+                <input type="text" name="phone" class="form-control" placeholder="Enter your phone number"
+                    value="{{ form.phone.value|default_if_none:'' }}">
+            </div>
+
+            <!-- Address -->
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Address</label>
+                <textarea name="address" class="form-control" rows="2"
+                    placeholder="Enter your address">{{ form.address.value|default_if_none:'' }}</textarea>
+            </div>
+
+            <!-- City -->
+            <div class="mb-3">
+                <label class="form-label fw-semibold">City</label>
+                <input type="text" name="city" class="form-control" placeholder="Enter your city"
+                    value="{{ form.city.value|default_if_none:'' }}">
+            </div>
+
+            <!-- State -->
+            <div class="mb-3">
+                <label class="form-label fw-semibold">State</label>
+                <input type="text" name="state" class="form-control" placeholder="Enter your state"
+                    value="{{ form.state.value|default_if_none:'' }}">
+            </div>
+
+            <!-- Postal Code -->
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Postal Code</label>
+                <input type="text" name="postal_code" class="form-control" placeholder="Enter your postal code"
+                    value="{{ form.postal_code.value|default_if_none:'' }}">
+            </div>
+
+            <!-- Country -->
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Country</label>
+                <input type="text" name="country" class="form-control" placeholder="Enter your country"
+                    value="{{ form.country.value|default_if_none:'' }}">
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100 mt-2">Save Changes</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

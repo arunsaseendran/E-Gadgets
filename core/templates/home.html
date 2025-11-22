@@ -1,0 +1,367 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Home | E-Gadgets - Premium Tech Store{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section">
+  <div class="container">
+    <div class="row align-items-center" style="min-height: 90vh;">
+      <div class="col-lg-6 animate-fade-in-up">
+        <h1 class="hero-title">
+          Discover the Future of <span class="text-gradient">Technology</span>
+        </h1>
+        <p class="hero-subtitle">
+          Premium gadgets, unbeatable prices, and lightning-fast delivery. 
+          Your tech journey starts here.
+        </p>
+        <div class="d-flex gap-3 mt-4">
+          <a href="#products" class="btn btn-primary btn-lg px-4 py-3">
+            <i class="fas fa-shopping-bag me-2"></i>Shop Now
+          </a>
+          <a href="#categories" class="btn btn-outline-primary btn-lg px-4 py-3">
+            <i class="fas fa-th-large me-2"></i>Browse Categories
+          </a>
+        </div>
+        
+        <!-- Stats -->
+        <div class="row mt-5 g-4">
+          <div class="col-4">
+            <div class="text-center">
+              <h3 class="text-gradient fw-bold mb-0">10K+</h3>
+              <small class="text-muted">Happy Customers</small>
+            </div>
+          </div>
+          <div class="col-4">
+            <div class="text-center">
+              <h3 class="text-gradient fw-bold mb-0">500+</h3>
+              <small class="text-muted">Products</small>
+            </div>
+          </div>
+          <div class="col-4">
+            <div class="text-center">
+              <h3 class="text-gradient fw-bold mb-0">4.9★</h3>
+              <small class="text-muted">Rating</small>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-lg-6 text-center animate-fade-in">
+        <div class="position-relative">
+          <div class="position-absolute top-50 start-50 translate-middle" style="width: 400px; height: 400px; background: radial-gradient(circle, rgba(0,212,255,0.15) 0%, transparent 70%); filter: blur(60px); z-index: -1;"></div>
+          <i class="fas fa-mobile-alt" style="font-size: 20rem; background: linear-gradient(135deg, #00d4ff 0%, #0ea5e9 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; animation: float 3s ease-in-out infinite;"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Sale Banner -->
+<section class="py-5" style="background: linear-gradient(135deg, #00d4ff 0%, #0891b2 100%); position: relative; overflow: hidden;">
+  <div class="position-absolute w-100 h-100" style="top: 0; left: 0; background: radial-gradient(circle at 30% 50%, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.1) 50%, transparent 70%); z-index: 0;"></div>
+  <div class="container position-relative" style="z-index: 1;">
+    <div class="row align-items-center text-white animate-fade-in-up">
+      <div class="col-lg-8">
+        <h2 class="fw-bold mb-2">
+          <i class="fas fa-bolt me-2"></i>MEGA SALE - Up to 50% OFF!
+        </h2>
+        <p class="mb-0 fs-5">Limited time offer on all accessories. Don't miss out!</p>
+      </div>
+      <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
+        <a href="{% url 'products:sale_products' %}" class="btn btn-dark btn-lg fw-bold px-5 shadow-lg">
+          Shop Sale <i class="fas fa-arrow-right ms-2"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Categories Section -->
+<section id="categories" class="py-5" style="margin-top: 50px;">
+  <div class="container">
+    <div class="text-center mb-5 animate-fade-in-up">
+      <h2 class="display-5 fw-bold mb-3">
+        <i class="fas fa-th-large text-gradient me-2"></i>Shop by Category
+      </h2>
+      <p class="text-muted fs-5">Explore our wide range of premium tech products</p>
+    </div>
+    
+    <div class="row g-4 stagger-animation">
+      {% for category in categories %}
+      <div class="col-lg-2 col-md-4 col-6">
+        <a href="{% url 'core:category_products' category.id %}" class="text-decoration-none">
+          <div class="card text-center h-100 hover-lift">
+            <div class="card-body p-4">
+              <div class="mb-3">
+                {% if 'Smartphone' in category.name %}
+                  <i class="fas fa-mobile-alt fa-3x text-gradient"></i>
+                {% elif 'Laptop' in category.name %}
+                  <i class="fas fa-laptop fa-3x text-gradient"></i>
+                {% elif 'Audio' in category.name or 'Headphone' in category.name %}
+                  <i class="fas fa-headphones fa-3x text-gradient"></i>
+                {% elif 'Watch' in category.name or 'Wearable' in category.name %}
+                  <i class="fas fa-clock fa-3x text-gradient"></i>
+                {% elif 'Tablet' in category.name %}
+                  <i class="fas fa-tablet-alt fa-3x text-gradient"></i>
+                {% elif 'Camera' in category.name %}
+                  <i class="fas fa-camera fa-3x text-gradient"></i>
+                {% else %}
+                  <i class="fas fa-box fa-3x text-gradient"></i>
+                {% endif %}
+              </div>
+              <h6 class="fw-bold mb-0">{{ category.name }}</h6>
+            </div>
+          </div>
+        </a>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- Featured Products -->
+<section id="products" class="py-5">
+  <div class="container">
+    <div class="text-center mb-5 animate-fade-in-up">
+      <h2 class="display-5 fw-bold mb-3">
+        <i class="fas fa-star text-gradient me-2"></i>Featured Products
+      </h2>
+      <p class="text-muted fs-5">Handpicked products just for you</p>
+    </div>
+    
+    <div class="row g-4 stagger-animation">
+      {% for product in products %}
+      <div class="col-lg-3 col-md-4 col-sm-6">
+        <div class="product-card">
+          <!-- Sale Badge -->
+          {% if product.discount_price %}
+          <div class="product-badge">
+            {{ product.get_discount_percentage }}% OFF
+          </div>
+          {% endif %}
+          
+          <!-- Product Image -->
+          <div class="position-relative overflow-hidden" style="height: 250px;">
+            <a href="{% url 'products:product_detail' product.id %}">
+              <img src="{{ product.image.url }}" 
+                   alt="{{ product.name }}" 
+                   class="w-100 h-100" 
+                   style="object-fit: cover;">
+            </a>
+            
+            <!-- Quick Actions -->
+            <div class="position-absolute top-0 start-0 p-3" style="z-index: 10;">
+              <button onclick="toggleWishlist({{ product.id }}, '{% url 'products:toggle_wishlist' product.id %}')" 
+                      class="btn btn-sm rounded-circle {% if product.id in wishlist_product_ids %}btn-danger{% else %}btn-outline-light{% endif %}" 
+                      id="wishlist-btn-{{ product.id }}"
+                      style="width: 40px; height: 40px;"
+                      title="{% if product.id in wishlist_product_ids %}Remove from Wishlist{% else %}Add to Wishlist{% endif %}">
+                <i class="{% if product.id in wishlist_product_ids %}fas{% else %}far{% endif %} fa-heart"></i>
+              </button>
+            </div>
+          </div>
+          
+          <!-- Product Info -->
+          <div class="p-3">
+            <small class="text-muted">{{ product.category.name }}</small>
+            <h6 class="fw-bold mt-1 mb-2">
+              <a href="{% url 'products:product_detail' product.id %}" class="text-decoration-none" style="color: var(--text-primary);">
+                {{ product.name|truncatewords:5 }}
+              </a>
+            </h6>
+            
+            <!-- Rating -->
+            <div class="mb-2 d-flex align-items-center">
+              <div>
+                {% for i in "12345" %}
+                  {% if forloop.counter <= product.rating %}
+                    <i class="fas fa-star text-warning"></i>
+                  {% else %}
+                    <i class="far fa-star text-warning"></i>
+                  {% endif %}
+                {% endfor %}
+              </div>
+              <small class="text-muted ms-2">
+                <strong>{{ product.rating|floatformat:1 }}</strong>
+                <span class="mx-1">·</span>
+                <i class="fas fa-comment-dots"></i> {{ product.review_count }}
+              </small>
+            </div>
+            
+            <!-- Price -->
+            <div class="d-flex align-items-center justify-content-between mb-3">
+              <div>
+                {% if product.discount_price %}
+                  <span class="fw-bold fs-5" style="color: var(--accent-success);">₹{{ product.discount_price }}</span>
+                  <del class="text-muted ms-2 small">₹{{ product.price }}</del>
+                {% else %}
+                  <span class="fw-bold fs-5" style="color: var(--text-primary);">₹{{ product.price }}</span>
+                {% endif %}
+              </div>
+            </div>
+            
+            <!-- Stock Status -->
+            {% if product.stock > 0 %}
+              <small class="text-success">
+                <i class="fas fa-check-circle"></i> In Stock ({{ product.stock }})
+              </small>
+            {% else %}
+              <small class="text-danger">
+                <i class="fas fa-times-circle"></i> Out of Stock
+              </small>
+            {% endif %}
+            
+            <!-- Add to Cart Button -->
+            <form id="cart-form-{{ product.id }}" class="mt-3" onsubmit="event.preventDefault(); toggleCart({{ product.id }}, '{% url 'cart:add_to_cart' product.id %}')">
+              {% csrf_token %}
+              <button id="cart-btn-{{ product.id }}" 
+                      type="submit" 
+                      class="btn w-100 {% if product.id in cart_product_ids %}btn-success{% else %}btn-primary{% endif %}"
+                      {% if product.stock == 0 %}disabled{% endif %}>
+                {% if product.id in cart_product_ids %}
+                  <i class="fas fa-check me-2"></i>Added to Cart
+                {% else %}
+                  <i class="fas fa-shopping-cart me-2"></i>Add to Cart
+                {% endif %}
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- Features Section -->
+<section class="py-5" style="background: var(--bg-secondary); margin-top: 50px;">
+  <div class="container">
+    <div class="row g-4 text-center">
+      <div class="col-md-3 col-6 animate-fade-in-up">
+        <div class="p-4">
+          <i class="fas fa-shipping-fast fa-3x text-gradient mb-3"></i>
+          <h5 class="fw-bold">Free Shipping</h5>
+          <p class="text-muted small mb-0">On orders over ₹999</p>
+        </div>
+      </div>
+      <div class="col-md-3 col-6 animate-fade-in-up" style="animation-delay: 0.1s;">
+        <div class="p-4">
+          <i class="fas fa-undo fa-3x text-gradient mb-3"></i>
+          <h5 class="fw-bold">Easy Returns</h5>
+          <p class="text-muted small mb-0">7 days return policy</p>
+        </div>
+      </div>
+      <div class="col-md-3 col-6 animate-fade-in-up" style="animation-delay: 0.2s;">
+        <div class="p-4">
+          <i class="fas fa-shield-alt fa-3x text-gradient mb-3"></i>
+          <h5 class="fw-bold">Secure Payment</h5>
+          <p class="text-muted small mb-0">100% secure transactions</p>
+        </div>
+      </div>
+      <div class="col-md-3 col-6 animate-fade-in-up" style="animation-delay: 0.3s;">
+        <div class="p-4">
+          <i class="fas fa-headset fa-3x text-gradient mb-3"></i>
+          <h5 class="fw-bold">24/7 Support</h5>
+          <p class="text-muted small mb-0">Dedicated customer service</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-20px); }
+}
+
+/* Wishlist button visibility */
+.product-card .btn-outline-light {
+  background: rgba(255, 255, 255, 0.9) !important;
+  border: 2px solid rgba(255, 255, 255, 0.3) !important;
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+}
+
+.product-card .btn-outline-light:hover {
+  background: rgba(255, 255, 255, 1) !important;
+  border-color: var(--accent-danger) !important;
+  transform: scale(1.1);
+}
+
+.product-card .btn-outline-light i {
+  color: #ef4444;
+}
+
+.product-card .btn-danger {
+  background: #ef4444 !important;
+  border: 2px solid #ef4444 !important;
+}
+
+.product-card .btn-danger:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+}
+</style>
+
+<script>
+// Get CSRF token
+function getCookie(name) {
+  let cookieValue = null;
+  if (document.cookie && document.cookie !== '') {
+    const cookies = document.cookie.split(';');
+    for (let i = 0; i < cookies.length; i++) {
+      const cookie = cookies[i].trim();
+      if (cookie.substring(0, name.length + 1) === (name + '=')) {
+        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+        break;
+      }
+    }
+  }
+  return cookieValue;
+}
+
+// Toggle Wishlist
+function toggleWishlist(productId, url) {
+  fetch(url, {
+    method: 'POST',
+    headers: {
+      'X-CSRFToken': getCookie('csrftoken'),
+      'Content-Type': 'application/json'
+    },
+    credentials: 'same-origin'
+  })
+  .then(response => response.json())
+  .then(data => {
+    const btn = document.getElementById(`wishlist-btn-${productId}`);
+    const icon = btn.querySelector('i');
+    
+    if (data.added) {
+      // Added to wishlist
+      btn.classList.remove('btn-outline-light');
+      btn.classList.add('btn-danger');
+      icon.classList.remove('far');
+      icon.classList.add('fas');
+    } else if (data.removed) {
+      // Removed from wishlist
+      btn.classList.remove('btn-danger');
+      btn.classList.add('btn-outline-light');
+      icon.classList.remove('fas');
+      icon.classList.add('far');
+    }
+    
+    // Show message (optional)
+    if (data.message) {
+      console.log(data.message);
+    }
+  })
+  .catch(error => {
+    console.error('Error:', error);
+    // Fallback: redirect to the URL
+    window.location.href = url;
+  });
+}
+</script>
+{% endblock %}

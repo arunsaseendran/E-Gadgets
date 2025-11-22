@@ -1,0 +1,339 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Sign Up | E-Gadgets{% endblock %}
+
+{% block content %}
+
+<div class="container py-5" style="margin-top: 90px;">
+    <div class="d-flex justify-content-center">
+        <div class="card shadow-lg p-4" style="width: 450px; border-radius: 15px;">
+            <h4 class="text-center fw-bold text-primary mb-3">Create Your Account</h4>
+            <p class="text-center text-muted mb-4">
+                Join <strong>E-Gadgets</strong> and explore the latest tech!
+            </p>
+
+            <!-- Registration Form -->
+            <form method="POST" id="signupForm" novalidate>
+                {% csrf_token %}
+                
+                <!-- Username -->
+                <div class="mb-3">
+                    <label class="form-label small fw-semibold" style="color: var(--text-primary);">Username</label>
+                    <input type="text" name="username" id="username" class="form-control" 
+                           placeholder="Choose a username" 
+                           required 
+                           minlength="3" 
+                           maxlength="150"
+                           pattern="^[a-zA-Z0-9_]+$"
+                           title="Username can only contain letters, numbers, and underscores">
+                    <div class="invalid-feedback">Username must be 3-150 characters (letters, numbers, underscore only)</div>
+                    <div class="valid-feedback"><i class="fas fa-check-circle"></i> Looks good!</div>
+                </div>
+
+                <!-- Email -->
+                <div class="mb-3">
+                    <label class="form-label small fw-semibold" style="color: var(--text-primary);">Email Address</label>
+                    <input type="email" name="email" id="email" class="form-control" 
+                           placeholder="your.email@example.com" 
+                           required
+                           pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
+                           title="Please enter a valid email address">
+                    <div class="invalid-feedback">Please enter a valid email address</div>
+                    <div class="valid-feedback"><i class="fas fa-check-circle"></i> Looks good!</div>
+                </div>
+
+                <!-- Password -->
+                <div class="mb-3">
+                    <label class="form-label small fw-semibold" style="color: var(--text-primary);">Password</label>
+                    <div class="input-group">
+                        <input type="password" name="password1" id="password1" class="form-control" 
+                               placeholder="Create a strong password" 
+                               required 
+                               minlength="8"
+                               pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$"
+                               title="Password must be at least 8 characters with uppercase, lowercase, and number">
+                        <button class="btn btn-outline-secondary" type="button" id="togglePassword1">
+                            <i class="far fa-eye"></i>
+                        </button>
+                    </div>
+                    <div class="invalid-feedback">Password must be 8+ characters with uppercase, lowercase, and number</div>
+                    <div class="valid-feedback"><i class="fas fa-check-circle"></i> Strong password!</div>
+                    <small class="text-muted">Min 8 characters, 1 uppercase, 1 lowercase, 1 number</small>
+                </div>
+
+                <!-- Confirm Password -->
+                <div class="mb-3">
+                    <label class="form-label small fw-semibold" style="color: var(--text-primary);">Confirm Password</label>
+                    <div class="input-group">
+                        <input type="password" name="password2" id="password2" class="form-control" 
+                               placeholder="Re-enter your password" 
+                               required>
+                        <button class="btn btn-outline-secondary" type="button" id="togglePassword2">
+                            <i class="far fa-eye"></i>
+                        </button>
+                    </div>
+                    <div class="invalid-feedback" id="password2Error">Passwords do not match</div>
+                    <div class="valid-feedback"><i class="fas fa-check-circle"></i> Passwords match!</div>
+                </div>
+
+                <!-- Register button -->
+                <div class="d-grid mt-4">
+                    <button type="submit" class="btn btn-primary fw-semibold py-2" id="registerBtn">
+                        <i class="fas fa-user-plus me-2"></i>Send OTP & Register
+                    </button>
+                </div>
+            </form>
+
+            <p class="text-center mt-3 mb-0">
+                Already have an account?
+                <a href="{% url 'accounts:login' %}" class="text-primary fw-semibold">Login here.</a>
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- OTP Verification Modal -->
+<div class="modal fade" id="otpModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border-radius: 20px; background: var(--bg-card); border: 1px solid var(--border-color);">
+            <div class="modal-header border-0">
+                <h5 class="modal-title fw-bold" style="color: var(--text-primary);">
+                    <i class="fas fa-envelope-open-text text-primary me-2"></i>Verify Your Email
+                </h5>
+            </div>
+            <div class="modal-body px-4 pb-4">
+                <p class="text-muted mb-4">We've sent a 6-digit OTP to <strong id="otpEmail" style="color: var(--accent-primary);"></strong></p>
+                
+                <form id="otpForm">
+                    {% csrf_token %}
+                    <input type="hidden" name="email" id="hiddenEmail">
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold" style="color: var(--text-primary);">Enter OTP</label>
+                        <input type="text" name="otp" id="otpInput" class="form-control form-control-lg text-center" 
+                               placeholder="000000" 
+                               maxlength="6" 
+                               pattern="\d{6}"
+                               required
+                               style="letter-spacing: 8px; font-size: 24px; font-weight: bold;">
+                        <div class="invalid-feedback">Please enter a valid 6-digit OTP</div>
+                    </div>
+                    
+                    <div class="text-center mb-3">
+                        <small class="text-muted">OTP expires in <span id="otpTimer" class="fw-bold text-warning">10:00</span></small>
+                    </div>
+                    
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary fw-semibold py-2" id="verifyOtpBtn">
+                            <i class="fas fa-check-circle me-2"></i>Verify & Complete Registration
+                        </button>
+                        <button type="button" class="btn btn-outline-secondary" id="resendOtpBtn">
+                            <i class="fas fa-redo me-2"></i>Resend OTP
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Form Validation
+const signupForm = document.getElementById('signupForm');
+const password1 = document.getElementById('password1');
+const password2 = document.getElementById('password2');
+
+// Toggle password visibility
+document.getElementById('togglePassword1').addEventListener('click', function() {
+    const type = password1.type === 'password' ? 'text' : 'password';
+    password1.type = type;
+    this.querySelector('i').classList.toggle('fa-eye');
+    this.querySelector('i').classList.toggle('fa-eye-slash');
+});
+
+document.getElementById('togglePassword2').addEventListener('click', function() {
+    const type = password2.type === 'password' ? 'text' : 'password';
+    password2.type = type;
+    this.querySelector('i').classList.toggle('fa-eye');
+    this.querySelector('i').classList.toggle('fa-eye-slash');
+});
+
+// Password match validation
+password2.addEventListener('input', function() {
+    if (password2.value !== password1.value) {
+        password2.setCustomValidity('Passwords do not match');
+    } else {
+        password2.setCustomValidity('');
+    }
+});
+
+password1.addEventListener('input', function() {
+    if (password2.value) {
+        if (password2.value !== password1.value) {
+            password2.setCustomValidity('Passwords do not match');
+        } else {
+            password2.setCustomValidity('');
+        }
+    }
+});
+
+// Form submission
+signupForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    if (!this.checkValidity()) {
+        e.stopPropagation();
+        this.classList.add('was-validated');
+        return;
+    }
+    
+    this.classList.add('was-validated');
+    
+    // Submit form to send OTP
+    const formData = new FormData(this);
+    const registerBtn = document.getElementById('registerBtn');
+    registerBtn.disabled = true;
+    registerBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Sending OTP...';
+    
+    fetch('{% url "accounts:signup" %}', {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-CSRFToken': formData.get('csrfmiddlewaretoken')
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        registerBtn.disabled = false;
+        registerBtn.innerHTML = '<i class="fas fa-user-plus me-2"></i>Send OTP & Register';
+        
+        if (data.success) {
+            // Show OTP modal
+            document.getElementById('otpEmail').textContent = formData.get('email');
+            document.getElementById('hiddenEmail').value = formData.get('email');
+            const otpModal = new bootstrap.Modal(document.getElementById('otpModal'));
+            otpModal.show();
+            startOtpTimer();
+        } else {
+            alert(data.message || 'Registration failed. Please try again.');
+        }
+    })
+    .catch(error => {
+        registerBtn.disabled = false;
+        registerBtn.innerHTML = '<i class="fas fa-user-plus me-2"></i>Send OTP & Register';
+        alert('An error occurred. Please try again.');
+    });
+});
+
+// OTP Timer
+let timerInterval;
+function startOtpTimer() {
+    let timeLeft = 600; // 10 minutes
+    const timerDisplay = document.getElementById('otpTimer');
+    
+    clearInterval(timerInterval);
+    timerInterval = setInterval(() => {
+        const minutes = Math.floor(timeLeft / 60);
+        const seconds = timeLeft % 60;
+        timerDisplay.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+        
+        if (timeLeft <= 0) {
+            clearInterval(timerInterval);
+            timerDisplay.textContent = 'Expired';
+            timerDisplay.classList.add('text-danger');
+        }
+        timeLeft--;
+    }, 1000);
+}
+
+// OTP Form Submission
+document.getElementById('otpForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    const verifyBtn = document.getElementById('verifyOtpBtn');
+    verifyBtn.disabled = true;
+    verifyBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Verifying...';
+    
+    fetch('{% url "accounts:verify_otp" %}', {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-CSRFToken': formData.get('csrfmiddlewaretoken')
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            clearInterval(timerInterval);
+            window.location.href = '{% url "accounts:login" %}';
+        } else {
+            verifyBtn.disabled = false;
+            verifyBtn.innerHTML = '<i class="fas fa-check-circle me-2"></i>Verify & Complete Registration';
+            alert(data.message || 'Invalid OTP. Please try again.');
+        }
+    })
+    .catch(error => {
+        verifyBtn.disabled = false;
+        verifyBtn.innerHTML = '<i class="fas fa-check-circle me-2"></i>Verify & Complete Registration';
+        alert('An error occurred. Please try again.');
+    });
+});
+
+// Resend OTP
+document.getElementById('resendOtpBtn').addEventListener('click', function() {
+    const email = document.getElementById('hiddenEmail').value;
+    const btn = this;
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Sending...';
+    
+    fetch('{% url "accounts:resend_otp" %}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+        },
+        body: JSON.stringify({ email: email })
+    })
+    .then(response => response.json())
+    .then(data => {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-redo me-2"></i>Resend OTP';
+        if (data.success) {
+            alert('OTP resent successfully!');
+            startOtpTimer();
+        } else {
+            alert(data.message || 'Failed to resend OTP');
+        }
+    });
+});
+
+// OTP input - only numbers
+document.getElementById('otpInput').addEventListener('input', function(e) {
+    this.value = this.value.replace(/[^0-9]/g, '');
+});
+</script>
+
+<style>
+.form-control:focus {
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 0 0.2rem rgba(0, 212, 255, 0.25);
+}
+
+.was-validated .form-control:valid {
+    border-color: #28a745;
+}
+
+.was-validated .form-control:invalid {
+    border-color: #dc3545;
+}
+
+.valid-feedback {
+    color: #28a745;
+}
+
+.invalid-feedback {
+    color: #dc3545;
+}
+</style>
+{% endblock %}

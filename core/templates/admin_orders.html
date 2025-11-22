@@ -1,0 +1,262 @@
+{% extends 'base.html' %}
+{% block title %}Manage Orders | Admin{% endblock %}
+
+{% block content %}
+<div class="container-fluid" style="margin-top: 80px; min-height: 100vh; padding: 30px;">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="display-5 fw-bold">
+                <i class="fas fa-box text-gradient"></i> Manage Orders
+            </h1>
+            <p class="text-muted">View and manage all customer orders</p>
+        </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="row g-3 mb-4">
+        <div class="col-lg-3 col-md-6">
+            <div class="card border-0 shadow-sm" style="background: linear-gradient(135deg, #00d4ff 0%, #0ea5e9 100%);">
+                <div class="card-body text-white p-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <p class="mb-1 small opacity-75">Total Orders</p>
+                            <h3 class="fw-bold mb-0">{{ total_orders }}</h3>
+                        </div>
+                        <div class="fs-2 opacity-50">
+                            <i class="fas fa-shopping-cart"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-3 col-md-6">
+            <div class="card border-0 shadow-sm" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+                <div class="card-body text-white p-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <p class="mb-1 small opacity-75">Total Revenue</p>
+                            <h3 class="fw-bold mb-0">₹{{ total_revenue|floatformat:0 }}</h3>
+                        </div>
+                        <div class="fs-2 opacity-50">
+                            <i class="fas fa-rupee-sign"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-3 col-md-6">
+            <div class="card border-0 shadow-sm" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);">
+                <div class="card-body text-white p-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <p class="mb-1 small opacity-75">Pending</p>
+                            <h3 class="fw-bold mb-0">{{ pending_orders }}</h3>
+                        </div>
+                        <div class="fs-2 opacity-50">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-3 col-md-6">
+            <div class="card border-0 shadow-sm" style="background: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%);">
+                <div class="card-body text-white p-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <p class="mb-1 small opacity-75">Delivered</p>
+                            <h3 class="fw-bold mb-0">{{ delivered_orders }}</h3>
+                        </div>
+                        <div class="fs-2 opacity-50">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filters - Compact -->
+    <div class="row mb-3">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-3">
+                    <form method="GET" class="row g-2 align-items-end">
+                        <div class="col-md-5">
+                            <input type="text" name="search" class="form-control form-control-sm" placeholder="🔍 Search by Order ID or Customer..." value="{{ search_query }}">
+                        </div>
+                        <div class="col-md-3">
+                            <select name="status" class="form-select form-select-sm">
+                                <option value="">📋 All Statuses</option>
+                                {% for status in all_statuses %}
+                                <option value="{{ status }}" {% if current_status == status %}selected{% endif %}>{{ status }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <button type="submit" class="btn btn-primary btn-sm me-2">
+                                <i class="fas fa-filter me-1"></i>Apply
+                            </button>
+                            <a href="{% url 'core:admin_orders' %}" class="btn btn-outline-secondary btn-sm">
+                                <i class="fas fa-redo me-1"></i>Clear
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Orders Table - Compact -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header border-0 py-2 d-flex justify-content-between align-items-center">
+                    <h6 class="mb-0 fw-bold">
+                        <i class="fas fa-list me-2"></i>All Orders ({{ orders.count }})
+                    </h6>
+                    <small class="text-muted">Total: ₹{{ total_revenue|floatformat:0 }}</small>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover table-sm mb-0">
+                            <thead style="background: var(--bg-secondary); font-size: 0.85rem;">
+                                <tr>
+                                    <th class="px-3 py-2">ID</th>
+                                    <th>Customer</th>
+                                    <th>Date</th>
+                                    <th class="text-center">Items</th>
+                                    <th class="text-end">Amount</th>
+                                    <th class="text-center">Payment</th>
+                                    <th class="text-center">Status</th>
+                                    <th class="text-center">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody style="font-size: 0.9rem;">
+                                {% for order in orders %}
+                                <tr>
+                                    <td class="px-3 fw-bold text-primary">#{{ order.id }}</td>
+                                    <td>
+                                        <div class="fw-semibold">{{ order.user.username }}</div>
+                                        <small class="text-muted d-block" style="font-size: 0.75rem;">{{ order.user.email|truncatechars:25 }}</small>
+                                    </td>
+                                    <td>
+                                        <small class="d-block">{{ order.order_date|date:"M d, Y" }}</small>
+                                        <small class="text-muted" style="font-size: 0.75rem;">{{ order.order_date|date:"h:i A" }}</small>
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="badge bg-secondary" style="font-size: 0.75rem;">{{ order.items.count }}</span>
+                                    </td>
+                                    <td class="text-end fw-bold text-success">₹{{ order.total_amount|floatformat:0 }}</td>
+                                    <td class="text-center">
+                                        <span class="badge bg-dark" style="font-size: 0.7rem;">{{ order.payment_method }}</span>
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="badge {% if order.status == 'Delivered' %}bg-success
+                                            {% elif order.status == 'Cancelled' %}bg-danger
+                                            {% elif order.status == 'Shipped' %}bg-info
+                                            {% elif order.status == 'Processing' %}bg-warning text-dark
+                                            {% else %}bg-secondary{% endif %}" style="font-size: 0.75rem; min-width: 80px;">
+                                            {{ order.status }}
+                                        </span>
+                                    </td>
+                                    <td class="text-center">
+                                        <div class="btn-group btn-group-sm">
+                                            <a href="{% url 'orders:order_detail' order.id %}" class="btn btn-outline-primary" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;" title="View">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <button 
+                                                type="button" 
+                                                class="btn btn-outline-success js-open-status-modal" 
+                                                style="padding: 0.25rem 0.5rem; font-size: 0.75rem;" 
+                                                title="Edit"
+                                                data-order-id="{{ order.id }}"
+                                                data-current-status="{{ order.status }}"
+                                                data-bs-toggle="modal" 
+                                                data-bs-target="#updateStatusModal">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="8" class="text-center py-5">
+                                        <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+                                        <p class="text-muted">No orders found</p>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reusable Status Update Modal -->
+    <div class="modal fade" id="updateStatusModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content" style="background: var(--bg-card);">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title">Update Order <span id="js-order-id-label"></span></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <form id="js-status-form" method="POST" action="">
+                    {% csrf_token %}
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label">Order Status</label>
+                            <select name="status" id="js-status-select" class="form-select" required>
+                                <option value="Pending">Pending</option>
+                                <option value="Processing">Processing</option>
+                                <option value="Shipped">Shipped</option>
+                                <option value="Delivered">Delivered</option>
+                                <option value="Cancelled">Cancelled</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-0">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Update Status</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Wire up a single reusable modal to avoid multiple instances glitching
+        document.addEventListener('DOMContentLoaded', function () {
+            const modalEl = document.getElementById('updateStatusModal');
+            const formEl = document.getElementById('js-status-form');
+            const selectEl = document.getElementById('js-status-select');
+            const orderIdLabel = document.getElementById('js-order-id-label');
+
+            // Delegate click to all edit buttons
+            document.body.addEventListener('click', function (e) {
+                const btn = e.target.closest('.js-open-status-modal');
+                if (!btn) return;
+
+                const orderId = btn.getAttribute('data-order-id');
+                const currentStatus = btn.getAttribute('data-current-status');
+
+                // Set form action using our URL pattern
+                formEl.action = `/admin-orders/update/${orderId}/`;
+                orderIdLabel.textContent = `#${orderId}`;
+
+                // Preselect current status
+                if (currentStatus) {
+                    selectEl.value = currentStatus;
+                }
+            });
+        });
+    </script>
+
+</div>
+{% endblock %}

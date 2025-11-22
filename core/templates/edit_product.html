@@ -1,0 +1,299 @@
+{% extends 'base.html' %}
+{% block title %}Edit Product - {{ product.name }} | Admin{% endblock %}
+
+{% block content %}
+<div class="container-fluid" style="margin-top: 80px; min-height: 100vh; padding: 30px;">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="display-6 fw-bold">
+                        <i class="fas fa-edit text-success"></i> Edit Product
+                    </h1>
+                    <p class="text-muted">Update product details and manage images</p>
+                </div>
+                <div>
+                    <a href="{% url 'core:admin_products' %}" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left"></i> Back to Products
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        <div class="row g-4">
+            <!-- Left Column - Product Details -->
+            <div class="col-lg-8">
+                <!-- Basic Information -->
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-header bg-white border-0 py-3">
+                        <h5 class="card-title mb-0 fw-bold">
+                            <i class="fas fa-info-circle text-primary"></i> Basic Information
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label for="name" class="form-label fw-semibold">Product Name <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control form-control-lg" id="name" name="name" 
+                                   value="{{ product.name }}" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="description" class="form-label fw-semibold">Description <span class="text-danger">*</span></label>
+                            <textarea class="form-control" id="description" name="description" 
+                                      rows="5" required>{{ product.description }}</textarea>
+                            <div class="form-text">Provide a detailed description of the product</div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="category" class="form-label fw-semibold">Category <span class="text-danger">*</span></label>
+                                <select class="form-select" id="category" name="category" required>
+                                    {% for category in categories %}
+                                    <option value="{{ category.id }}" {% if product.category.id == category.id %}selected{% endif %}>
+                                        {{ category.name }}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="stock" class="form-label fw-semibold">Stock Quantity <span class="text-danger">*</span></label>
+                                <input type="number" class="form-control" id="stock" name="stock" 
+                                       value="{{ product.stock }}" min="0" required>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="price" class="form-label fw-semibold">Price (₹) <span class="text-danger">*</span></label>
+                                <input type="number" class="form-control" id="price" name="price" 
+                                       value="{{ product.price }}" step="0.01" min="0" required>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="discount_price" class="form-label fw-semibold">Discount Price (₹)</label>
+                                <input type="number" class="form-control" id="discount_price" name="discount_price" 
+                                       value="{{ product.discount_price|default:'' }}" step="0.01" min="0">
+                                <div class="form-text">Leave empty if no discount</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Multiple Images Section -->
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-header bg-white border-0 py-3">
+                        <h5 class="card-title mb-0 fw-bold">
+                            <i class="fas fa-images text-warning"></i> Product Images
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <!-- Existing Images -->
+                        {% if product_images %}
+                        <div class="mb-4">
+                            <h6 class="fw-semibold mb-3">Current Additional Images</h6>
+                            <div class="row g-3">
+                                {% for img in product_images %}
+                                <div class="col-md-3">
+                                    <div class="card h-100 border">
+                                        <img src="{{ img.image.url }}" class="card-img-top" 
+                                             style="height: 150px; object-fit: cover;" alt="{{ img.alt_text }}">
+                                        <div class="card-body p-2">
+                                            <small class="text-muted d-block mb-2">Order: {{ img.order }}</small>
+                                            <form method="POST" action="{% url 'core:delete_product_image' img.id %}" 
+                                                  onsubmit="return confirm('Delete this image?');">
+                                                {% csrf_token %}
+                                                <button type="submit" class="btn btn-danger btn-sm w-100">
+                                                    <i class="fas fa-trash"></i> Delete
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        <!-- Add New Images -->
+                        <div>
+                            <h6 class="fw-semibold mb-3">Add New Images</h6>
+                            <div class="mb-3">
+                                <label for="additional_images" class="form-label">Upload Multiple Images</label>
+                                <input type="file" class="form-control" id="additional_images" 
+                                       name="additional_images" multiple accept="image/*">
+                                <div class="form-text">
+                                    <i class="fas fa-info-circle"></i> You can select multiple images at once. 
+                                    Supported formats: JPG, PNG, GIF
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="alt_text" class="form-label">Alt Text (for new images)</label>
+                                <input type="text" class="form-control" id="alt_text" name="alt_text" 
+                                       placeholder="Optional: Description for accessibility">
+                            </div>
+
+                            <!-- Image Preview -->
+                            <div id="imagePreview" class="row g-2 mt-2"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column - Main Image & Actions -->
+            <div class="col-lg-4">
+                <!-- Main Product Image -->
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-header bg-white border-0 py-3">
+                        <h5 class="card-title mb-0 fw-bold">
+                            <i class="fas fa-image text-info"></i> Main Product Image
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            {% if product.image %}
+                            <img src="{{ product.image.url }}" alt="{{ product.name }}" 
+                                 class="img-fluid rounded mb-3" id="mainImagePreview">
+                            {% else %}
+                            <div class="bg-light rounded d-flex align-items-center justify-content-center mb-3" 
+                                 style="height: 250px;">
+                                <i class="fas fa-image fa-3x text-muted"></i>
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="image" class="form-label fw-semibold">Change Main Image</label>
+                            <input type="file" class="form-control" id="image" name="image" 
+                                   accept="image/*" onchange="previewMainImage(event)">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product Stats -->
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-header bg-white border-0 py-3">
+                        <h5 class="card-title mb-0 fw-bold">
+                            <i class="fas fa-chart-line text-success"></i> Product Stats
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted">Views:</span>
+                            <span class="fw-bold">{{ product.views }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted">Rating:</span>
+                            <span class="fw-bold">
+                                <i class="fas fa-star text-warning"></i> {{ product.rating|floatformat:1 }}
+                            </span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted">Created:</span>
+                            <span class="fw-bold">{{ product.created_at|date:"M d, Y" }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <span class="text-muted">Updated:</span>
+                            <span class="fw-bold">{{ product.updated_at|date:"M d, Y" }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body">
+                        <button type="submit" class="btn btn-success btn-lg w-100 mb-2">
+                            <i class="fas fa-save"></i> Save Changes
+                        </button>
+                        <a href="{% url 'products:product_detail' product.id %}" 
+                           class="btn btn-outline-primary w-100 mb-2" target="_blank">
+                            <i class="fas fa-eye"></i> View Product
+                        </a>
+                        <a href="{% url 'core:admin_products' %}" class="btn btn-outline-secondary w-100">
+                            <i class="fas fa-times"></i> Cancel
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+// Preview main image before upload
+function previewMainImage(event) {
+    const file = event.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById('mainImagePreview').src = e.target.result;
+        }
+        reader.readAsDataURL(file);
+    }
+}
+
+// Preview multiple images before upload
+document.getElementById('additional_images').addEventListener('change', function(event) {
+    const preview = document.getElementById('imagePreview');
+    preview.innerHTML = '';
+    
+    const files = event.target.files;
+    if (files.length > 0) {
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                const col = document.createElement('div');
+                col.className = 'col-3';
+                col.innerHTML = `
+                    <div class="card border">
+                        <img src="${e.target.result}" class="card-img-top" 
+                             style="height: 100px; object-fit: cover;">
+                        <div class="card-body p-1 text-center">
+                            <small class="text-muted">New</small>
+                        </div>
+                    </div>
+                `;
+                preview.appendChild(col);
+            }
+            
+            reader.readAsDataURL(file);
+        }
+    }
+});
+</script>
+
+<style>
+.form-label {
+    margin-bottom: 0.5rem;
+}
+
+.card {
+    transition: transform 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+}
+
+input[type="file"] {
+    cursor: pointer;
+}
+
+#imagePreview .card {
+    transition: all 0.3s;
+}
+
+#imagePreview .card:hover {
+    transform: scale(1.05);
+}
+</style>
+
+{% endblock %}

@@ -1,0 +1,344 @@
+{% extends 'base.html' %}
+{% block title %}Admin Dashboard | E-Gadgets{% endblock %}
+
+{% block content %}
+<div class="container-fluid" style="margin-top: 80px; min-height: 100vh; padding: 30px;">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="display-5 fw-bold">
+                <i class="fas fa-chart-line text-gradient"></i> Admin Dashboard
+            </h1>
+            <p class="text-muted">Welcome back, {{ user.username }}! Here's your store overview.</p>
+        </div>
+    </div>
+
+    <!-- Stats Cards - Compact -->
+    <div class="row g-3 mb-4">
+        <div class="col-xl-3 col-md-6">
+            <div class="card border-0 shadow-sm h-100" style="background: linear-gradient(135deg, #00d4ff 0%, #0ea5e9 100%);">
+                <div class="card-body text-white p-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <p class="mb-1 small opacity-75">Total Users</p>
+                            <h3 class="fw-bold mb-0">{{ total_users }}</h3>
+                        </div>
+                        <div class="fs-2 opacity-50">
+                            <i class="fas fa-users"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-xl-3 col-md-6">
+            <div class="card border-0 shadow-sm h-100" style="background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);">
+                <div class="card-body text-white p-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <p class="mb-1 small opacity-75">Total Orders</p>
+                            <h3 class="fw-bold mb-0">{{ total_orders }}</h3>
+                        </div>
+                        <div class="fs-2 opacity-50">
+                            <i class="fas fa-shopping-cart"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-xl-3 col-md-6">
+            <div class="card border-0 shadow-sm h-100" style="background: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%);">
+                <div class="card-body text-white p-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <p class="mb-1 small opacity-75">Total Products</p>
+                            <h3 class="fw-bold mb-0">{{ total_products }}</h3>
+                        </div>
+                        <div class="fs-2 opacity-50">
+                            <i class="fas fa-box"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-xl-3 col-md-6">
+            <div class="card border-0 shadow-sm h-100" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+                <div class="card-body text-white p-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <p class="mb-1 small opacity-75">Total Revenue</p>
+                            <h3 class="fw-bold mb-0">₹{{ total_revenue|floatformat:0 }}</h3>
+                        </div>
+                        <div class="fs-2 opacity-50">
+                            <i class="fas fa-rupee-sign"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Row - Compact -->
+    <div class="row g-3 mb-4">
+        <!-- Orders by Status -->
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header border-0 py-2">
+                    <h6 class="card-title mb-0 fw-bold">
+                        <i class="fas fa-chart-pie text-primary"></i> Orders by Status
+                    </h6>
+                </div>
+                <div class="card-body p-2">
+                    <canvas id="statusChart" height="180"></canvas>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Sales by Category -->
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header border-0 py-2">
+                    <h6 class="card-title mb-0 fw-bold">
+                        <i class="fas fa-chart-bar text-success"></i> Sales by Category
+                    </h6>
+                </div>
+                <div class="card-body p-2">
+                    <canvas id="categoryChart" height="180"></canvas>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Quick Actions -->
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header border-0 py-2">
+                    <h6 class="card-title mb-0 fw-bold">
+                        <i class="fas fa-bolt text-warning"></i> Quick Actions
+                    </h6>
+                </div>
+                <div class="card-body p-2">
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'core:admin_orders' %}" class="btn btn-primary btn-sm">
+                            <i class="fas fa-box me-2"></i>Manage Orders
+                        </a>
+                        <a href="{% url 'core:admin_users' %}" class="btn btn-info btn-sm">
+                            <i class="fas fa-users me-2"></i>Manage Users
+                        </a>
+                        <a href="{% url 'core:admin_products' %}" class="btn btn-warning btn-sm text-white">
+                            <i class="fas fa-boxes me-2"></i>Manage Products
+                        </a>
+                        <a href="{% url 'core:add_product' %}" class="btn btn-success btn-sm">
+                            <i class="fas fa-plus me-2"></i>Add Product
+                        </a>
+                        <a href="/admin/accounts/category/" class="btn btn-secondary btn-sm">
+                            <i class="fas fa-th-large me-2"></i>Manage Categories
+                        </a>
+                        <a href="/admin/" class="btn btn-outline-primary btn-sm">
+                            <i class="fas fa-cog me-2"></i>Django Admin
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Products & Orders Row - Compact -->
+    <div class="row g-3 mb-4">
+        <!-- Most Viewed Products -->
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header border-0 py-2">
+                    <h6 class="card-title mb-0 fw-bold">
+                        <i class="fas fa-fire text-danger"></i> Top Viewed
+                    </h6>
+                </div>
+                <div class="card-body p-2">
+                    <div class="list-group list-group-flush">
+                        {% for product in most_viewed|slice:":5" %}
+                        <div class="list-group-item border-0 px-0 py-1">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="flex-grow-1">
+                                    <small class="fw-semibold d-block text-truncate" style="max-width: 150px;">{{ product.name }}</small>
+                                    <small class="text-muted">{{ product.category.name }}</small>
+                                </div>
+                                <span class="badge bg-primary rounded-pill small">
+                                    {{ product.views }}
+                                </span>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Best Selling Products -->
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header border-0 py-2">
+                    <h6 class="card-title mb-0 fw-bold">
+                        <i class="fas fa-trophy text-warning"></i> Best Sellers
+                    </h6>
+                </div>
+                <div class="card-body p-2">
+                    <div class="list-group list-group-flush">
+                        {% for product in best_selling|slice:":5" %}
+                        <div class="list-group-item border-0 px-0 py-1">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="flex-grow-1">
+                                    <small class="fw-semibold d-block text-truncate" style="max-width: 150px;">{{ product.name }}</small>
+                                    <small class="text-muted">₹{{ product.price }}</small>
+                                </div>
+                                <span class="badge bg-success rounded-pill small">
+                                    {{ product.total_sold }}
+                                </span>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Recent Orders - Compact -->
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header border-0 py-2">
+                    <h6 class="card-title mb-0 fw-bold">
+                        <i class="fas fa-receipt text-info"></i> Recent Orders
+                    </h6>
+                </div>
+                <div class="card-body p-2">
+                    <div class="list-group list-group-flush">
+                        {% for order in recent_orders|slice:":5" %}
+                        <div class="list-group-item border-0 px-0 py-1">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="flex-grow-1">
+                                    <small class="fw-semibold">#{{ order.id }} - {{ order.user.username }}</small>
+                                    <small class="d-block text-muted">₹{{ order.total_amount }}</small>
+                                </div>
+                                <span class="badge {% if order.status == 'Delivered' %}bg-success{% elif order.status == 'Cancelled' %}bg-danger{% elif order.status == 'Shipped' %}bg-info{% else %}bg-warning{% endif %} small">
+                                    {{ order.status }}
+                                </span>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <div class="mt-2">
+                        <a href="{% url 'core:admin_orders' %}" class="btn btn-sm btn-outline-primary w-100">
+                            View All Orders
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Low Stock Alert - Compact Inline -->
+    {% if low_stock_products %}
+    <div class="row g-3 mb-4">
+        <div class="col-12">
+            <div class="alert alert-danger border-start border-danger border-4" role="alert">
+                <h6 class="alert-heading fw-bold">
+                    <i class="fas fa-exclamation-triangle me-2"></i>Low Stock Alert
+                </h6>
+                <div class="d-flex flex-wrap gap-2">
+                    {% for product in low_stock_products|slice:":10" %}
+                    <span class="badge bg-danger">
+                        {{ product.name }} ({{ product.stock }} left)
+                    </span>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Orders by Status Chart
+    const statusCtx = document.getElementById('statusChart').getContext('2d');
+    new Chart(statusCtx, {
+        type: 'doughnut',
+        data: {
+            labels: {{ status_labels|safe }},
+            datasets: [{
+                data: {{ status_data|safe }},
+                backgroundColor: [
+                    '#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#EC4899'
+                ]
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }
+    });
+
+    // Sales by Category Chart
+    const categoryCtx = document.getElementById('categoryChart').getContext('2d');
+    new Chart(categoryCtx, {
+        type: 'bar',
+        data: {
+            labels: {{ category_labels|safe }},
+            datasets: [{
+                label: 'Sales (₹)',
+                data: {{ category_data|safe }},
+                backgroundColor: '#10B981'
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+
+    // Monthly Revenue Chart
+    const revenueCtx = document.getElementById('revenueChart').getContext('2d');
+    new Chart(revenueCtx, {
+        type: 'line',
+        data: {
+            labels: {{ month_labels|safe }},
+            datasets: [{
+                label: 'Revenue (₹)',
+                data: {{ month_data|safe }},
+                borderColor: '#3B82F6',
+                backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                tension: 0.4,
+                fill: true
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}

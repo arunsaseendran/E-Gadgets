@@ -1,0 +1,302 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+  Home | E-Gadgets
+{% endblock %}
+
+{% block content %}
+  {% if messages %}
+    <div class="container mt-3">
+      {% for message in messages %}
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+          {{ message }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  <div class="container" style="padding-top: 100px;">
+    <!-- SALE POSTER -->
+    <div class="row mb-5 animate__animated animate__fadeInDown">
+      <div class="col-12">
+        <div class="card p-4 text-center text-white rounded-4 shadow-lg" style="background: linear-gradient(45deg, #F39C12, #E67E22); border: none;">
+          <h2 class="fw-bold mb-1">🎉 MEGA SALE IS HAPPENING! 🎉</h2>
+          <h3 class="mb-3">UPTO 50% OFF ON ALL ACCESSORIES</h3>
+          <p class="lead">Don't miss out! Limited stock available.</p>
+          <a href="{% url 'products:sale_products' %}" class="btn btn-light btn-lg fw-bold mx-auto mt-3" style="width: 250px;">Shop Now <i class="fas fa-arrow-right ms-2"></i></a>
+        </div>
+      </div>
+    </div>
+
+    <!-- CATEGORIES SECTION --> <h2 class="fw-bold mb-4 text-center animate__animated animate__fadeIn">Shop by Category</h2>
+    <div class="row text-center mb-5 g-3 animate__animated animate__fadeInUp">
+      <div class="col-md-2 col-6">
+        <a href="{% url 'core:category_products' 1 %}" class="text-decoration-none text-dark">
+          <div class="p-3 bg-white rounded-3 shadow-sm transition-hover">
+            <i class="fas fa-mobile-alt fa-2x text-primary mb-2"></i>
+            <p class="fw-bold mb-0">Smartphones</p>
+          </div>
+        </a>
+      </div>
+
+      <div class="col-md-2 col-6">
+        <a href="{% url 'core:category_products' 2 %}" class="text-decoration-none text-dark">
+          <div class="p-3 bg-white rounded-3 shadow-sm transition-hover">
+            <i class="fas fa-laptop fa-2x text-primary mb-2"></i>
+            <p class="fw-bold mb-0">Laptops</p>
+          </div>
+        </a>
+      </div>
+
+      <div class="col-md-2 col-6">
+        <a href="{% url 'core:category_products' 6 %}" class="text-decoration-none text-dark">
+          <div class="p-3 bg-white rounded-3 shadow-sm transition-hover">
+            <i class="fas fa-headphones fa-2x text-primary mb-2"></i>
+            <p class="fw-bold mb-0">Audio</p>
+          </div>
+        </a>
+      </div>
+
+      <div class="col-md-2 col-6">
+        <a href="{% url 'core:category_products' 3 %}" class="text-decoration-none text-dark">
+          <div class="p-3 bg-white rounded-3 shadow-sm transition-hover">
+            <i class="fas fa-clock fa-2x text-primary mb-2"></i>
+            <p class="fw-bold mb-0">Wearables</p>
+          </div>
+        </a>
+      </div>
+
+      <div class="col-md-2 col-6">
+        <a href="{% url 'core:category_products' 4 %}" class="text-decoration-none text-dark">
+          <div class="p-3 bg-white rounded-3 shadow-sm transition-hover">
+            <i class="fas fa-camera fa-2x text-primary mb-2"></i>
+            <p class="fw-bold mb-0">Cameras</p>
+          </div>
+        </a>
+      </div>
+
+      <div class="col-md-2 col-6">
+        <a href="{% url 'core:category_products' 5 %}" class="text-decoration-none text-dark">
+          <div class="p-3 bg-white rounded-3 shadow-sm transition-hover">
+            <i class="fas fa-charging-station fa-2x text-primary mb-2"></i>
+            <p class="fw-bold mb-0">Accessories</p>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <!-- FEATURED PRODUCTS -->
+    <h2 class="fw-bold mb-4 animate__animated animate__fadeInLeft">Featured Gadgets</h2>
+
+    <div class="row g-4 mb-5">
+      {% for product in products %}
+        <div class="col-lg-3 col-md-4 col-sm-6 animate__animated animate__zoomIn">
+          <div class="card product-card h-100 position-relative shadow-sm border-0">
+            <!-- ❤️ Wishlist Button -->
+            <button class="wishlist-btn position-absolute top-0 end-0 m-2 rounded-circle shadow-sm border-0 bg-white" style="width: 38px; height: 38px; z-index: 2;" onclick="toggleWishlist({{ product.id }}, '{% url 'products:toggle_wishlist' product.id %}')">
+              <i id="wishlist-icon-{{ product.id }}"
+                class="fa {% if product.id in user_wishlist %}
+                  
+                  
+                  
+                  
+                  
+                  
+                  fa-solid text-danger
+
+
+
+
+
+
+                {% else %}
+                  
+                  
+                  
+                  
+                  
+                  
+                  fa-regular
+
+
+
+
+
+
+                {% endif %} fa-heart wishlist-icon">
+
+              </i>
+            </button>
+
+            <!-- Product Image -->
+            <a href="{% url 'products:product_detail' product_id=product.id %}" class="text-decoration-none text-dark">
+              <div class="ratio ratio-1x1 bg-light d-flex align-items-center justify-content-center rounded-top">
+                <img src="{{ product.image.url }}" alt="{{ product.name }}" class="img-fluid" style="max-height: 200px; object-fit: contain;" />
+              </div>
+            </a>
+
+            <!-- Product Info -->
+            <div class="card-body text-center">
+              <h5 class="card-title fw-semibold">{{ product.name }}</h5>
+              <p class="card-text text-muted small">{{ product.description|truncatewords:10 }}</p>
+
+              <div class="text-center mt-2">
+                {% if product.discount_price %}
+                  <span class="text-muted text-decoration-line-through me-2">₹{{ product.price }}</span>
+                  <span class="fw-bold text-danger">₹{{ product.discount_price }}</span>
+                {% else %}
+                  <span class="fw-bold text-dark">₹{{ product.price }}</span>
+                {% endif %}
+              </div>
+
+              <!-- 🛒 Add to Cart -->
+              <div class="text-center mt-3">
+                <form id="cart-form-{{ product.id }}" onsubmit="event.preventDefault(); toggleCart({{ product.id }}, '{% url 'cart:add_to_cart' product.id %}')">
+                  {% csrf_token %}
+                  <button id="cart-btn-{{ product.id }}"
+                    type="submit"
+                    class="btn {% if product.id in user_cart %}
+                      
+                      
+                      
+                      
+                      
+                      
+                      btn-info
+
+
+
+
+
+
+                    {% else %}
+                      
+                      
+                      
+                      
+                      
+                      
+                      btn-outline-primary
+
+
+
+
+
+
+                    {% endif %} btn-sm w-75">
+                    {% if product.id in user_cart %}
+                      ✔ Added to Cart
+                    {% else %}
+                      <i class="fas fa-shopping-cart me-1"></i> Add to Cart
+                    {% endif %}
+                  </button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      {% empty %}
+        <p class="text-center text-muted">No products available.</p>
+      {% endfor %}
+    </div>
+
+    <!-- ✅ Toast Notification (Bootstrap) --> <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+      <div id="wishlistToast" class="toast align-items-center text-white bg-success border-0" role="alert">
+        <div class="d-flex">
+          <div class="toast-body fw-semibold">Product added to wishlist ❤️</div> <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+      </div>
+    </div> <!-- CTA Section --> <div class="text-center py-5">
+      <h3 class="fw-bold mb-3">Can't find what you need?</h3> <p class="lead">Explore our complete catalog of over 500 cutting-edge electronics.</p> <button class="btn btn-success btn-lg"><i class="fas fa-rocket me-2"></i> View Full Catalog</button>
+    </div>
+  </div>
+
+  <!-- ✅ Scripts -->
+  <script>
+    function getCookie(name) {
+      let cookieValue = null
+      if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';')
+        for (let i = 0; i < cookies.length; i++) {
+          const cookie = cookies[i].trim()
+          if (cookie.substring(0, name.length + 1) === name + '=') {
+            cookieValue = decodeURIComponent(cookie.substring(name.length + 1))
+            break
+          }
+        }
+      }
+      return cookieValue
+    }
+    
+    // 🛒 AJAX Cart Toggle
+    function toggleCart(productId, url) {
+      fetch(url, {
+        method: 'POST',
+        headers: {
+          'X-CSRFToken': getCookie('csrftoken')
+        }
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          const btn = document.querySelector(`#cart-btn-${productId}`)
+          if (data.added) {
+            btn.classList.remove('btn-outline-primary')
+            btn.classList.add('btn-info')
+            btn.innerHTML = '✔ Added to Cart'
+          } else {
+            btn.classList.remove('btn-info')
+            btn.classList.add('btn-outline-primary')
+            btn.innerHTML = '<i class="fas fa-shopping-cart me-1"></i> Add to Cart'
+          }
+          showMessage(data.message)
+        })
+        .catch((error) => console.error('Error:', error))
+    }
+    
+    // ❤️ Wishlist
+    function toggleWishlist(productId, url) {
+      fetch(url, {
+        method: 'POST',
+        headers: { 'X-CSRFToken': getCookie('csrftoken') }
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          const icon = document.querySelector(`#wishlist-icon-${productId}`)
+          if (data.added) {
+            icon.classList.remove('fa-regular')
+            icon.classList.add('fa-solid', 'text-danger')
+          } else {
+            icon.classList.remove('fa-solid', 'text-danger')
+            icon.classList.add('fa-regular')
+          }
+          showMessage(data.message)
+        })
+        .catch((error) => console.error('Error:', error))
+    }
+    
+    // 🔔 Alert
+    function showMessage(message, type = 'success') {
+      const oldAlert = document.querySelector('.custom-alert')
+      if (oldAlert) oldAlert.remove()
+    
+      const alertBox = document.createElement('div')
+      alertBox.className = `custom-alert alert alert-${type} shadow`
+      alertBox.textContent = message
+      Object.assign(alertBox.style, {
+        position: 'fixed',
+        top: '90px',
+        left: '50%',
+        transform: 'translateX(-50%)',
+        zIndex: '5000',
+        width: 'auto',
+        maxWidth: '300px',
+        textAlign: 'center',
+        pointerEvents: 'none'
+      })
+      document.body.appendChild(alertBox)
+      setTimeout(() => alertBox.remove(), 2000)
+    }
+  </script>
+{% endblock %}

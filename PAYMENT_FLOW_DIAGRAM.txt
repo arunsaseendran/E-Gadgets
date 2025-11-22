@@ -1,0 +1,327 @@
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                    RAZORPAY PAYMENT FLOW DIAGRAM                             ║
+║                         E-Gadgets Project                                    ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                          STEP 1: CHECKOUT PAGE                              │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+    👤 User
+     │
+     │ 1. Fills delivery address
+     │ 2. Selects "Online Payment (Razorpay)"
+     │ 3. Clicks "Pay ₹[amount]"
+     │
+     ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│  📄 checkout.html                                                           │
+│  ├─ Validates form                                                          │
+│  ├─ Prevents default form submission                                        │
+│  └─ Calls openRazorpay() function                                           │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                    STEP 2: CREATE RAZORPAY ORDER                            │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+    🌐 Frontend (JavaScript)
+     │
+     │ AJAX POST Request
+     │ URL: /orders/create-razorpay-order/
+     │ Headers: CSRF Token
+     │
+     ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│  🐍 Backend (views.create_razorpay_order)                                   │
+│  ├─ Get cart items                                                          │
+│  ├─ Calculate total (items + 18% GST)                                       │
+│  ├─ Convert to paise (₹100 = 10000 paise)                                   │
+│  ├─ Initialize Razorpay client                                              │
+│  │   client = razorpay.Client(auth=(KEY_ID, KEY_SECRET))                    │
+│  ├─ Create Razorpay order                                                   │
+│  │   razorpay_order = client.order.create({                                 │
+│  │       'amount': amount_in_paise,                                         │
+│  │       'currency': 'INR',                                                 │
+│  │       'payment_capture': 1                                               │
+│  │   })                                                                     │
+│  └─ Return order details to frontend                                        │
+└─────────────────────────────────────────────────────────────────────────────┘
+     │
+     │ JSON Response:
+     │ {
+     │   "success": true,
+     │   "order_id": "order_xxxxx",
+     │   "amount": 10000,
+     │   "currency": "INR",
+     │   "key_id": "rzp_test_xxxxx",
+     │   "name": "E-Gadgets",
+     │   "prefill": {...}
+     │ }
+     │
+     ▼
+
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                    STEP 3: OPEN RAZORPAY CHECKOUT                           │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+    🌐 Frontend (JavaScript)
+     │
+     │ Initialize Razorpay Checkout
+     │ const rzp = new Razorpay(options);
+     │ rzp.open();
+     │
+     ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│  💳 Razorpay Checkout Modal                                                 │
+│  ┌───────────────────────────────────────────────────────────────────────┐  │
+│  │  🏦 Razorpay Secure Checkout                                          │  │
+│  │                                                                        │  │
+│  │  E-Gadgets                                                             │  │
+│  │  Amount: ₹[total]                                                      │  │
+│  │                                                                        │  │
+│  │  Choose Payment Method:                                                │  │
+│  │  ┌─────────────────────────────────────────────────────────────────┐  │  │
+│  │  │ 📱 UPI (Google Pay, PhonePe, Paytm)                             │  │  │
+│  │  ├─────────────────────────────────────────────────────────────────┤  │  │
+│  │  │ 💳 Credit/Debit Card (Visa, Mastercard, RuPay)                  │  │  │
+│  │  ├─────────────────────────────────────────────────────────────────┤  │  │
+│  │  │ 🏦 Net Banking (All Banks)                                      │  │  │
+│  │  ├─────────────────────────────────────────────────────────────────┤  │  │
+│  │  │ 💰 Wallets (Paytm, PhonePe, Amazon Pay)                         │  │  │
+│  │  └─────────────────────────────────────────────────────────────────┘  │  │
+│  └───────────────────────────────────────────────────────────────────────┘  │
+└─────────────────────────────────────────────────────────────────────────────┘
+     │
+     │ 👤 User selects payment method
+     │    and completes payment
+     │
+     ▼
+
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                    STEP 4: PAYMENT PROCESSING                               │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+    💳 Razorpay Payment Gateway
+     │
+     │ Processes payment through:
+     │ ├─ Bank/UPI Server
+     │ ├─ Card Network
+     │ └─ Wallet Provider
+     │
+     ├─ SUCCESS ✅
+     │   └─ Generates payment_id & signature
+     │
+     └─ FAILURE ❌
+         └─ Returns error description
+
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                    STEP 5A: PAYMENT SUCCESS                                 │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+    💳 Razorpay
+     │
+     │ Calls handler function with:
+     │ {
+     │   razorpay_order_id: "order_xxxxx",
+     │   razorpay_payment_id: "pay_xxxxx",
+     │   razorpay_signature: "signature_xxxxx"
+     │ }
+     │
+     ▼
+    🌐 Frontend (verifyPayment function)
+     │
+     │ POST Request
+     │ URL: /orders/verify-payment/
+     │ Data: order_id, payment_id, signature
+     │
+     ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│  🐍 Backend (views.verify_razorpay_payment)                                 │
+│  ├─ Get payment details from request                                        │
+│  ├─ Initialize Razorpay client                                              │
+│  ├─ Verify signature using HMAC-SHA256                                      │
+│  │   client.utility.verify_payment_signature({                              │
+│  │       'razorpay_order_id': order_id,                                     │
+│  │       'razorpay_payment_id': payment_id,                                 │
+│  │       'razorpay_signature': signature                                    │
+│  │   })                                                                     │
+│  │                                                                           │
+│  ├─ IF SIGNATURE VALID ✅                                                    │
+│  │   ├─ Check stock availability                                            │
+│  │   ├─ Create Order in database                                            │
+│  │   │   └─ payment_status = 'SUCCESS'                                      │
+│  │   ├─ Create OrderItems                                                   │
+│  │   ├─ Update product stock (reduce)                                       │
+│  │   ├─ Add to purchase history                                             │
+│  │   ├─ Clear cart                                                          │
+│  │   ├─ Send confirmation email                                             │
+│  │   └─ Return success response                                             │
+│  │                                                                           │
+│  └─ IF SIGNATURE INVALID ❌                                                  │
+│      └─ Return error response                                               │
+└─────────────────────────────────────────────────────────────────────────────┘
+     │
+     │ JSON Response:
+     │ {
+     │   "success": true,
+     │   "order_id": 123,
+     │   "message": "Payment successful!"
+     │ }
+     │
+     ▼
+    🌐 Frontend
+     │
+     │ Redirect to success page
+     │ window.location.href = '/orders/success/123/'
+     │
+     ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│  ✅ ORDER SUCCESS PAGE                                                       │
+│  ┌───────────────────────────────────────────────────────────────────────┐  │
+│  │  🎉 Order Placed Successfully!                                        │  │
+│  │                                                                        │  │
+│  │  Order ID: #123                                                        │  │
+│  │  Amount: ₹[total]                                                      │  │
+│  │  Payment: Online (Razorpay) ✅                                         │  │
+│  │  Status: Order Placed                                                  │  │
+│  │                                                                        │  │
+│  │  📧 Confirmation email sent                                            │  │
+│  │  📦 Track your order                                                   │  │
+│  └───────────────────────────────────────────────────────────────────────┘  │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                    STEP 5B: PAYMENT FAILURE                                 │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+    💳 Razorpay
+     │
+     │ Calls payment.failed event with:
+     │ {
+     │   error: {
+     │     description: "Payment failed",
+     │     metadata: { order_id: "order_xxxxx" }
+     │   }
+     │ }
+     │
+     ▼
+    🌐 Frontend (handlePaymentFailure function)
+     │
+     │ POST Request
+     │ URL: /orders/payment-failed/
+     │ Data: order_id, error_description
+     │
+     ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│  🐍 Backend (views.razorpay_payment_failed)                                 │
+│  ├─ Log error details                                                       │
+│  ├─ Add error message                                                       │
+│  └─ Return failure response                                                 │
+└─────────────────────────────────────────────────────────────────────────────┘
+     │
+     ▼
+    🌐 Frontend
+     │
+     │ Show error alert
+     │ Reload checkout page
+     │ Cart items preserved
+     │
+     ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│  ❌ CHECKOUT PAGE (with error message)                                      │
+│  ┌───────────────────────────────────────────────────────────────────────┐  │
+│  │  ⚠️ Payment failed: [error description]                               │  │
+│  │  Please try again or choose a different payment method.               │  │
+│  └───────────────────────────────────────────────────────────────────────┘  │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                           SECURITY MEASURES                                  ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+🔒 Signature Verification
+   └─ HMAC-SHA256(order_id + "|" + payment_id, secret_key)
+   └─ Prevents payment tampering
+
+🔒 CSRF Protection
+   └─ CSRF token on all POST requests
+   └─ Prevents cross-site attacks
+
+🔒 Server-side Validation
+   └─ All verification on backend
+   └─ No client-side trust
+
+🔒 Stock Management
+   └─ Stock checked before payment
+   └─ Updated only after verification
+
+🔒 Environment Variables
+   └─ API keys in .env file
+   └─ Never exposed in code
+
+
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                           DATABASE UPDATES                                   ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+Order Model:
+┌─────────────────────────────────────────────────────────────────────────────┐
+│  Field                  │  Value                                            │
+├─────────────────────────┼───────────────────────────────────────────────────┤
+│  user                   │  User object                                      │
+│  total_amount           │  ₹[amount]                                        │
+│  payment_method         │  'ONLINE'                                         │
+│  razorpay_order_id      │  'order_xxxxx'                                    │
+│  razorpay_payment_id    │  'pay_xxxxx'                                      │
+│  razorpay_signature     │  'signature_xxxxx'                                │
+│  payment_status         │  'SUCCESS'                                        │
+│  status                 │  'Order Placed'                                   │
+│  order_date             │  2024-11-09 10:36:00                              │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                              KEY ENDPOINTS                                   ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+POST /orders/create-razorpay-order/
+     └─ Creates Razorpay order
+     └─ Returns order details
+
+POST /orders/verify-payment/
+     └─ Verifies payment signature
+     └─ Creates database order
+     └─ Returns success/failure
+
+POST /orders/payment-failed/
+     └─ Handles payment failures
+     └─ Logs error details
+
+
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                           TESTING CHECKLIST                                  ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+✅ Test successful UPI payment
+✅ Test successful card payment
+✅ Test successful net banking payment
+✅ Test successful wallet payment
+✅ Test failed payment scenario
+✅ Test payment cancellation
+✅ Test stock reduction after payment
+✅ Test email confirmation
+✅ Test order creation in database
+✅ Test COD still works
+
+
+═══════════════════════════════════════════════════════════════════════════════
+                        🎉 IMPLEMENTATION COMPLETE! 🎉
+═══════════════════════════════════════════════════════════════════════════════

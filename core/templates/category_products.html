@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% block title %}
+  {{ category.name }} | E-Gadgets
+{% endblock %}
+
+{% block content %}
+  <div class="container py-5" style="margin-top: 90px;">
+    <h2 class="fw-bold text-center mb-4">{{ category.name }}</h2>
+    <div class="row g-4 justify-content-center">
+      {% for product in products %}
+        <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+          <div class="card product-card">
+            <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}" />
+            <div class="card-body">
+              <h6 class="card-title fw-semibold">{{ product.name }}</h6>
+              <p class="text-muted mb-2">{{ product.price }} ₹</p>
+              <a href="{% url 'products:product_detail' product.id %}" class="btn btn-primary btn-sm">View Details</a>
+            </div>
+          </div>
+        </div>
+      {% empty %}
+        <p class="text-center text-muted">No products available in this category.</p>
+      {% endfor %}
+    </div>
+  </div>
+  <style>
+    .product-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      height: 420px; /* fixed height for all cards */
+      border: none;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+      background-color: #fff;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .product-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+    }
+    
+    .product-card img {
+      height: 200px; /* make all images same height */
+      width: 100%;
+      object-fit: contain; /* keep image aspect ratio */
+      padding: 10px;
+    }
+    
+    .product-card .card-body {
+      text-align: center;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+  </style>
+{% endblock %}

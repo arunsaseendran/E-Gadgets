@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block title %}
+  Order Successful
+{% endblock %}
+
+{% block content %}
+  <div class="container py-5 text-center" style="margin-top: 100px;">
+    <h2 class="fw-bold text-success mb-4">🎉 Order Placed Successfully!</h2>
+    <p>
+      Your order ID is <strong>#{{ order.id }}</strong>.
+    </p>
+    <p>Total Amount: ₹{{ order.total_amount }}</p>
+    <a href="{% url 'orders:order_detail' order.id %}" class="btn btn-primary mt-3">View Order Details</a>
+  </div>
+{% endblock %}

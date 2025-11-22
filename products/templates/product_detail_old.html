@@ -1,0 +1,153 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+  {{ product.name }} | E-Gadgets
+{% endblock %}
+
+{% block content %}
+  <div class="container py-5" style="margin-top: 90px; min-height: 70vh;">
+    <div class="row justify-content-center align-items-center g-5 animate__animated animate__fadeIn">
+      <!-- Product Image -->
+      <div class="col-md-5 d-flex justify-content-center">
+        <div class="card shadow-sm border-0 p-4 rounded-4" style="width: 100%; max-width: 420px;">
+          {% if product.image %}
+            <img src="{{ product.image.url }}" alt="{{ product.name }}" class="img-fluid rounded-4" />
+          {% else %}
+            <img src="{% static 'images/no-image.png' %}" alt="No image" class="img-fluid rounded-4" />
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Product Info -->
+      <div class="col-md-6">
+        <h2 class="fw-bold mb-2">{{ product.name }}</h2>
+        <p class="text-muted mb-3">{{ product.category.name }}</p>
+
+        <!-- Price -->
+        {% if product.discount_price %}
+          <h4 class="mb-3">
+            <span class="text-success fw-semibold">₹{{ product.discount_price }}</span>
+            <del class="text-muted ms-2">₹{{ product.price }}</del>
+            <span class="badge bg-danger ms-2">On Sale</span>
+          </h4>
+        {% else %}
+          <h4 class="fw-semibold mb-3">₹{{ product.price }}</h4>
+        {% endif %}
+
+        <p class="text-secondary" style="font-size: 1.05rem;">{{ product.description }}</p>
+
+        <!-- Buttons -->
+        <div class="d-flex align-items-center mt-3">
+          <!-- Add to Cart -->
+          <form id="cart-form-{{ product.id }}" class="me-2" onsubmit="event.preventDefault(); toggleCart({{ product.id }}, '{% url 'cart:add_to_cart' product.id %}')">
+            {% csrf_token %}
+            <button id="cart-btn-{{ product.id }}"
+              type="submit"
+              class="btn {% if in_cart %}
+                btn-info
+              {% else %}
+                btn-outline-primary
+              {% endif %} btn-sm">
+              {% if in_cart %}
+                ✔ Added to Cart
+              {% else %}
+                🛒 Add to Cart
+              {% endif %}
+            </button>
+          </form>
+
+          <!-- Add to Wishlist -->
+          <form id="wishlist-form-{{ product.id }}" class="me-2" onsubmit="event.preventDefault(); toggleWishlist({{ product.id }}, '{% url 'products:add_to_wishlist' product.id %}')">
+            {% csrf_token %}
+            <button id="wishlist-btn-{{ product.id }}"
+              type="submit"
+              class="btn btn-sm {% if in_wishlist %}
+                btn-danger
+              {% else %}
+                btn-outline-danger
+              {% endif %}">
+              <i class="fa fa-heart"></i>
+              {% if in_wishlist %}
+                Added to Wishlist
+              {% else %}
+                Add to Wishlist
+              {% endif %}
+            </button>
+          </form>
+        </div>
+
+        <!-- Back to Home -->
+        <div class="mt-4">
+          <a href="{% url 'core:home' %}" class="text-decoration-none"><i class="fa fa-arrow-left me-1"></i> Back to Home</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- JS -->
+  <script>
+    function getCookie(name) {
+      let cookieValue = null
+      if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';')
+        for (let i = 0; i < cookies.length; i++) {
+          const cookie = cookies[i].trim()
+          if (cookie.substring(0, name.length + 1) === name + '=') {
+            cookieValue = decodeURIComponent(cookie.substring(name.length + 1))
+            break
+          }
+        }
+      }
+      return cookieValue
+    }
+    
+    // Toggle Cart (add/remove)
+    function toggleCart(productId, url) {
+      fetch(url, {
+        method: 'POST',
+        headers: {
+          'X-CSRFToken': getCookie('csrftoken')
+        }
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          const btn = document.querySelector(`#cart-btn-${productId}`)
+          if (data.added) {
+            btn.classList.remove('btn-outline-primary')
+            btn.classList.add('btn-info')
+            btn.textContent = '✔ Added to Cart'
+          } else if (data.removed) {
+            btn.classList.remove('btn-info')
+            btn.classList.add('btn-outline-primary')
+            btn.textContent = '🛒 Add to Cart'
+          }
+        })
+        .catch((error) => console.error('Error:', error))
+    }
+    
+    // Toggle Wishlist (add/remove)
+    function toggleWishlist(productId, url) {
+      fetch(url, {
+        method: 'POST',
+        headers: {
+          'X-CSRFToken': getCookie('csrftoken')
+        }
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          const btn = document.querySelector(`#wishlist-btn-${productId}`)
+          if (data.added) {
+            btn.classList.remove('btn-outline-danger')
+            btn.classList.add('btn-danger')
+            btn.innerHTML = '<i class="fa fa-heart"></i> Added to Wishlist'
+          } else if (data.removed) {
+            btn.classList.remove('btn-danger')
+            btn.classList.add('btn-outline-danger')
+            btn.innerHTML = '<i class="fa fa-heart"></i> Add to Wishlist'
+          }
+        })
+        .catch((error) => console.error('Error:', error))
+    }
+  </script>
+{% endblock %}

@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+{% block title %}
+  Search Results
+{% endblock %}
+{% block content %}
+  <style>
+    /* Make sure our styles override everything else */
+    .product-card {
+      display: flex !important;
+      flex-direction: column !important;
+      justify-content: space-between !important;
+      height: 100% !important;
+      border: none !important;
+      border-radius: 15px !important;
+      background: #fff !important;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1) !important;
+      transition: all 0.3s ease-in-out !important;
+      overflow: hidden !important;
+    }
+    
+    .product-card:hover {
+      transform: translateY(-6px) !important;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15) !important;
+    }
+    
+    .product-card img {
+      width: 100% !important;
+      height: 230px !important; /* Equal image size */
+      object-fit: contain !important;
+      background: #f8f9fa !important;
+      padding: 15px !important;
+      border-bottom: 1px solid #eee !important;
+    }
+    
+    .product-card .card-body {
+      text-align: center !important;
+      flex-grow: 1 !important;
+      display: flex !important;
+      flex-direction: column !important;
+      justify-content: space-between !important;
+      padding: 15px !important;
+    }
+    
+    .product-card .card-title {
+      font-size: 1rem !important;
+      font-weight: 600 !important;
+      color: #333 !important;
+      min-height: 48px !important;
+      margin-bottom: 8px !important;
+    }
+    
+    .product-card .card-text {
+      color: #007bff !important;
+      font-weight: 500 !important;
+      margin-bottom: 12px !important;
+    }
+    
+    .product-card .btn {
+      border-radius: 25px !important;
+      font-size: 0.9rem !important;
+      font-weight: 500 !important;
+      padding: 6px 16px !important;
+    }
+    
+    .search-results-container {
+      margin-top: 100px !important;
+      margin-bottom: 100px !important;
+    }
+    
+    .search-heading {
+      text-align: center !important;
+      font-weight: 700 !important;
+      color: #1a2b5c !important;
+      margin-bottom: 40px !important;
+    }
+    
+    .row.g-4 {
+      row-gap: 2rem !important;
+    }
+  </style>
+
+  <div class="container search-results-container">
+    <h3 class="search-heading">Search Results</h3>
+    <div class="row g-4">
+      {% for product in products %}
+        <div class="col-lg-3 col-md-4 col-sm-6 d-flex">
+          <div class="product-card card w-100">
+            <img src="{{ product.image.url }}" alt="{{ product.name }}" />
+            <div class="card-body">
+              <h5 class="card-title">{{ product.name }}</h5>
+              <p class="card-text">₹{{ product.price }}</p>
+              <a href="{% url 'products:detail' product.id %}" class="btn btn-outline-primary btn-sm">View Details</a>
+            </div>
+          </div>
+        </div>
+      {% empty %}
+        <p class="text-center text-muted">No products found.</p>
+      {% endfor %}
+    </div>
+  </div>
+{% endblock %}
